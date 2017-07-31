@@ -46,20 +46,22 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Дата': date })
                   
     def check_func(self):
-        pattern_phone = r'[0-9]{10,10}'
+        error_ = ''
+        pattern_phone = r'[0-9]{10}'
         self.product_name = self.ui.textf_product_name.toPlainText()
         self.name = self.ui.textf_name.toPlainText()
         self.receiver = str(self.ui.cBox_receiver.currentText())
         self.stuff = self.ui.textf_stuff.toPlainText()
         self.phone = self.ui.textf_phone.toPlainText()
-        if not re.match(pattern_phone, self.phone): # and len(self.phone):
-            Example.showDialog(ex)
+        if not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
+            error_ = 'Неправильно введено ФИО'
+        elif not re.match(pattern_phone, self.phone) or len(self.phone):
+            error_ = 'Неправильно заполнен номер'
         elif self.stuff =='':
-            pass
-        elif self.name =='':
-            pass
+            error_ = 'Не введены примечания'
         elif self.product_name =='':
-            pass
+            error_ = 'Не введено название изделия'
+        DialogWin.initUI(di)
         self.insert_func()
 
 
@@ -67,7 +69,7 @@ class MyWin(QtWidgets.QMainWindow):
         pass
 
 
-class Example(QtWidgets.QWidget):
+class DialogWin(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
@@ -77,28 +79,21 @@ class Example(QtWidgets.QWidget):
 
     def initUI(self):
 
-        self.btn = QtWidgets.QPushButton('Dialog', self)
-        self.btn.move(20, 20)
+        self.btn = QtWidgets.QPushButton('OK', self)
+        self.btn.move(50, 50)
         # self.btn.clicked.connect(self.showDialog)
 
-        self.le = QtWidgets.QLineEdit(self)
-        self.le.move(130, 22)
+        # self.le = QtWidgets.QLineEdit(self)
+        # self.le.move(130, 22)
 
         self.setGeometry(300, 300, 290, 150)
-        self.setWindowTitle('Input dialog')
+        self.setWindowTitle('Error')
         self.show()
 
-
-    def showDialog(self):
-
-        text, ok = QtWidgets.QInputDialog.getText(self, 'Input Dialog',
-            'Enter your name:')
-        if ok:
-            self.le.setText(str(text))
 
 if __name__=="__main__":
     app = QtWidgets.QApplication(sys.argv)
     myapp = MyWin()
     myapp.show()
-    ex = Example()
+    di = DialogWin()
     sys.exit(app.exec_())
