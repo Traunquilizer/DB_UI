@@ -34,6 +34,12 @@ class MyWin(QtWidgets.QMainWindow):
 
         self.ui.button_search.clicked.connect(self.search_func)
 
+    def win_clear(self):
+            self.ui.textf_product_name.setPlainText('')
+            self.ui.textf_name.setPlainText('')
+            self.ui.textf_stuff.setPlainText('')
+            self.ui.textf_phone.setPlainText('')
+
     def insert_func(self):
         temp_var = self.ui.dateEdit.date()
         date = int(str(temp_var.toPyDate())[0:4] +\
@@ -47,6 +53,7 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Изделие': self.product_name, 
                                     u'Примечания': self.stuff,
                                     u'Дата': date })
+        self.win_clear()
                   
     def check_func(self):
         while True:
@@ -69,10 +76,7 @@ class MyWin(QtWidgets.QMainWindow):
                 ErrorWinStuff.initUI(ers)
                 break
             self.insert_func()
-            self.ui.textf_product_name.setText('')
-            self.ui.textf_name.setText('')
-            self.ui.textf_stuff.setText('')
-            self.ui.textf_phone.setText('')
+            SuccessWin.initUI(sw)
             break
 
     def search_func(self):
@@ -90,7 +94,7 @@ class ErrorWinName(QtWidgets.QWidget):
         self.lbl.move(20, 20)
 
         self.setGeometry(700, 400, 250, 100)
-        self.setWindowTitle('Error')
+        self.setWindowTitle('Ошибка')
         self.show()
 
 
@@ -105,7 +109,7 @@ class ErrorWinPhone(QtWidgets.QWidget):
         self.lbl.move(20, 20)
 
         self.setGeometry(700, 400, 250, 100)
-        self.setWindowTitle('Error')
+        self.setWindowTitle('Ошибка')
         self.show()
 
 
@@ -120,7 +124,7 @@ class ErrorWinStuff(QtWidgets.QWidget):
         self.lbl.move(20, 20)
 
         self.setGeometry(700, 400, 250, 100)
-        self.setWindowTitle('Error')
+        self.setWindowTitle('Ошибка')
         self.show()
 
 
@@ -135,7 +139,22 @@ class ErrorWinProdName(QtWidgets.QWidget):
         self.lbl.move(20, 20)
 
         self.setGeometry(700, 400, 250, 100)
-        self.setWindowTitle('Error')
+        self.setWindowTitle('Ошибка')
+        self.show()
+
+
+class SuccessWin(QtWidgets.QWidget):
+
+    def __init__(self):
+        super().__init__()
+        # self.initUI()
+
+    def initUI(self):
+        self.lbl = QtWidgets.QLabel( 'Заявка успешно сохранена' , self)
+        self.lbl.move(20, 20)
+
+        self.setGeometry(700, 400, 250, 100)
+        self.setWindowTitle('Выполнено')
         self.show()
 
 
@@ -147,4 +166,5 @@ if __name__=="__main__":
     erp = ErrorWinPhone()
     ers = ErrorWinStuff()
     ewp = ErrorWinProdName()
+    sw = SuccessWin()
     sys.exit(app.exec_())
