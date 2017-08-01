@@ -69,6 +69,10 @@ class MyWin(QtWidgets.QMainWindow):
                 ErrorWinStuff.initUI(ers)
                 break
             self.insert_func()
+            self.ui.textf_product_name.setText('')
+            self.ui.textf_name.setText('')
+            self.ui.textf_stuff.setText('')
+            self.ui.textf_phone.setText('')
             break
 
     def search_func(self):
