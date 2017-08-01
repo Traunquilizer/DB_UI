@@ -3,8 +3,6 @@ import re
 import sys
 import os
 import pymongo
-import datetime
-# from MyDictionaryCompleter import MyDictionaryCompleter
 # Импортируем наш интерфейс из файла
 from name import *
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -90,10 +88,11 @@ class ErrorWinName(QtWidgets.QWidget):
         # self.initUI()
 
     def initUI(self):
+        # self.center()
         self.lbl = QtWidgets.QLabel( 'Неправильно введено ФИО' , self)
-        self.lbl.move(20, 20)
+        self.lbl.move(40, 40)
 
-        self.setGeometry(700, 400, 250, 100)
+        self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
 
@@ -105,10 +104,11 @@ class ErrorWinPhone(QtWidgets.QWidget):
         # self.initUI()
 
     def initUI(self):
+        # self.center()
         self.lbl = QtWidgets.QLabel( 'Неправильно введен номер' , self)
-        self.lbl.move(20, 20)
+        self.lbl.move(40, 40)
 
-        self.setGeometry(700, 400, 250, 100)
+        self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
 
@@ -120,10 +120,11 @@ class ErrorWinStuff(QtWidgets.QWidget):
         # self.initUI()
 
     def initUI(self):
+        # self.center()
         self.lbl = QtWidgets.QLabel( 'Не введены примечания' , self)
-        self.lbl.move(20, 20)
+        self.lbl.move(40, 40)
 
-        self.setGeometry(700, 400, 250, 100)
+        self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
 
@@ -135,10 +136,11 @@ class ErrorWinProdName(QtWidgets.QWidget):
         # self.initUI()
 
     def initUI(self):
+        # self.center()
         self.lbl = QtWidgets.QLabel( 'Не введено название изделия' , self)
-        self.lbl.move(20, 20)
+        self.lbl.move(40, 40)
 
-        self.setGeometry(700, 400, 250, 100)
+        self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
 
@@ -150,12 +152,19 @@ class SuccessWin(QtWidgets.QWidget):
         # self.initUI()
 
     def initUI(self):
+        # self.center()
         self.lbl = QtWidgets.QLabel( 'Заявка успешно сохранена' , self)
-        self.lbl.move(20, 20)
+        self.lbl.move(40, 40)
 
-        self.setGeometry(700, 400, 250, 100)
+        self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Выполнено')
         self.show()
+
+
+# class SearchWin(QtWidgets.QWidget):
+
+    # def __init__(self):
+        
 
 
 if __name__=="__main__":
