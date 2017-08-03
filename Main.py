@@ -1,4 +1,3 @@
-# import subprocess
 import threading
 import re
 import sys
@@ -14,8 +13,6 @@ db = client.Architecht
 def server():
     os.system('mongod'+' --dbpath /var/lib/mongodb')
 
-# subprocess.call('mongod'+' --dbpath /var/lib/mongodb', shell = True)
-# надо как-то заставить это работать отдельно, чтобы не запускать через батник
 
 class MyWin(QtWidgets.QMainWindow):
     
@@ -28,11 +25,8 @@ class MyWin(QtWidgets.QMainWindow):
         # вставить в файл интерфейса
         # self.dateEdit.setDateTime(QtCore.QDateTime.currentDateTime())
         # self.dateEdit.setCalendarPopup(True)
-
         
-        # Здесь прописываем событие нажатия на кнопку        
         self.ui.button_proceed.clicked.connect(self.check_func)
-
         self.ui.button_search.clicked.connect(self.search_func)
 
     def win_clear(self):
@@ -171,9 +165,7 @@ class SuccessWin(QtWidgets.QWidget):
         
 
 def main_cycle():
-
-    if __name__=="__main__":
-        
+    if __name__=="__main__":        
         app = QtWidgets.QApplication(sys.argv)
         myapp = MyWin()
         globals()['ern'] = ErrorWinName()
@@ -182,17 +174,13 @@ def main_cycle():
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
         myapp.show()
-        sys.exit(app.exec_())
-
-
-        
+        sys.exit(app.exec_())       
 
 thread_server = threading.Thread( target = server, name = 'server')
 thread_main = threading.Thread( target = main_cycle, name = 'main cycle')
 
 thread_server.start()
 thread_main.start()
-
 
 thread_server.join()
 thread_main.join()
