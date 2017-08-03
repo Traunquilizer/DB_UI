@@ -1,4 +1,5 @@
 # import subprocess
+import threading
 import re
 import sys
 import os
@@ -7,12 +8,14 @@ import pymongo
 from name import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-# subprocess.call('mongod'+' --dbpath /var/lib/mongodb', shell = True)
-# надо как-то заставить это работать отдельно, чтобы не запускать через батник
-
 client = pymongo.MongoClient()
 db = client.Architecht
 
+def server():
+    os.system('mongod'+' --dbpath /var/lib/mongodb')
+
+# subprocess.call('mongod'+' --dbpath /var/lib/mongodb', shell = True)
+# надо как-то заставить это работать отдельно, чтобы не запускать через батник
 
 class MyWin(QtWidgets.QMainWindow):
     
@@ -62,19 +65,19 @@ class MyWin(QtWidgets.QMainWindow):
             self.stuff = self.ui.textf_stuff.toPlainText()
             self.phone = self.ui.textf_phone.toPlainText()
             if not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
-                ErrorWinName.initUI(ern)
+                ErrorWinName.initUI(globals()['ern'])
                 break 
             elif self.product_name =='':
-                ErrorWinProdName.initUI(ewp)
+                ErrorWinProdName.initUI(globals()['ewp'])
                 break               
             elif not re.match(pattern_phone, self.phone):
-                ErrorWinPhone.initUI(erp)
+                ErrorWinPhone.initUI(globals()['erp'])
                 break
             elif self.stuff =='':
-                ErrorWinStuff.initUI(ers)
+                ErrorWinStuff.initUI(globals()['ers'])
                 break
             self.insert_func()
-            SuccessWin.initUI(sw)
+            SuccessWin.initUI(globals()['suw'])
             break
 
     def search_func(self):
@@ -161,19 +164,35 @@ class SuccessWin(QtWidgets.QWidget):
         self.show()
 
 
+
 # class SearchWin(QtWidgets.QWidget):
 
     # def __init__(self):
         
 
+def main_cycle():
 
-if __name__=="__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    myapp = MyWin()
-    myapp.show()
-    ern = ErrorWinName()
-    erp = ErrorWinPhone()
-    ers = ErrorWinStuff()
-    ewp = ErrorWinProdName()
-    sw = SuccessWin()
-    sys.exit(app.exec_())
+    if __name__=="__main__":
+        
+        app = QtWidgets.QApplication(sys.argv)
+        myapp = MyWin()
+        globals()['ern'] = ErrorWinName()
+        globals()['erp'] = ErrorWinPhone()
+        globals()['ers'] = ErrorWinStuff()
+        globals()['ewp'] = ErrorWinProdName()
+        globals()['suw'] = SuccessWin()
+        myapp.show()
+        sys.exit(app.exec_())
+
+
+        
+
+thread_server = threading.Thread( target = server, name = 'server')
+thread_main = threading.Thread( target = main_cycle, name = 'main cycle')
+
+thread_server.start()
+thread_main.start()
+
+
+thread_server.join()
+thread_main.join()
