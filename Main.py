@@ -11,6 +11,8 @@ client = pymongo.MongoClient()
 db = client.Architecht
 
 def server():
+    # путь прописывается индивидуально, либо
+    # при значении пути по умолчанию аргумент опускается
     os.system('mongod'+' --dbpath /var/lib/mongodb')
 
 
@@ -49,6 +51,7 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Примечания': self.stuff,
                                     u'Дата': date })
         self.win_clear()
+        SuccessWin.initUI(globals()['suw'])
                   
     def check_func(self):
         while True:
@@ -71,11 +74,10 @@ class MyWin(QtWidgets.QMainWindow):
                 ErrorWinStuff.initUI(globals()['ers'])
                 break
             self.insert_func()
-            SuccessWin.initUI(globals()['suw'])
             break
 
     def search_func(self):
-        pass
+        SearchWin.initUI(globals()['sew'])
 
 
 class ErrorWinName(QtWidgets.QWidget):
@@ -159,9 +161,31 @@ class SuccessWin(QtWidgets.QWidget):
 
 
 
-# class SearchWin(QtWidgets.QWidget):
+class SearchWin(QtWidgets.QMainWindow):
 
-    # def __init__(self):
+    def __init__(self):
+        super().__init__()
+
+    def initUI(self):
+        col_headers = ['Изделие', 'ФИО', 'Телефон', 'Примечания', 'Дата', 'Принял']
+        self.setGeometry(700, 400, 800, 500)
+        self.setWindowTitle('Заявки')
+        # self.lab_start_phone = QtWidgets.QLabel(self.centralWidget)
+        # self.lab_start_phone.setGeometry(QtCore.QRect(30, 220, 21, 31))
+        # self.lab_start_phone.setObjectName("lab_start_phone")
+        self.form_widget = SearchTable(50, 6)
+        self.form_widget.setHorizontalHeaderLabels(col_headers)
+        self.setCentralWidget(self.form_widget)
+        self.show()
+
+class SearchTable(QtWidgets.QTableWidget):
+
+    def __init__(self, r, c):
+        super().__init__(r, c)
+        self.initUI()
+
+    def initUI(self):
+        self.show()
         
 
 def main_cycle():
@@ -173,6 +197,7 @@ def main_cycle():
         globals()['ers'] = ErrorWinStuff()
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
+        globals()['sew'] = SearchWin()
         myapp.show()
         sys.exit(app.exec_())       
 
