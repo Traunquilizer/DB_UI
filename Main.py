@@ -5,6 +5,7 @@ import os
 import pymongo
 # Импортируем наш интерфейс из файла
 from name import *
+from searchwin import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 client = pymongo.MongoClient()
@@ -32,10 +33,10 @@ class MyWin(QtWidgets.QMainWindow):
         self.ui.button_search.clicked.connect(self.search_func)
 
     def win_clear(self):
-            self.ui.textf_product_name.setPlainText('')
-            self.ui.textf_name.setPlainText('')
-            self.ui.textf_stuff.setPlainText('')
-            self.ui.textf_phone.setPlainText('')
+            self.ui.line_product_name.setText('')
+            self.ui.line_name.setText('')
+            self.ui.line_stuff.setText('')
+            self.ui.line_phone.setText('')
 
     def insert_func(self):
         temp_var = self.ui.dateEdit.date()
@@ -56,11 +57,11 @@ class MyWin(QtWidgets.QMainWindow):
     def check_func(self):
         while True:
             pattern_phone = r'[0-9]{10}'
-            self.product_name = self.ui.textf_product_name.toPlainText()
-            self.name = self.ui.textf_name.toPlainText()
+            self.product_name = self.ui.line_product_name.text()
+            self.name = self.ui.line_name.text()
             self.receiver = str(self.ui.cBox_receiver.currentText())
-            self.stuff = self.ui.textf_stuff.toPlainText()
-            self.phone = self.ui.textf_phone.toPlainText()
+            self.stuff = self.ui.line_stuff.text()
+            self.phone = self.ui.line_phone.text()
             if not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
                 ErrorWinName.initUI(globals()['ern'])
                 break 
@@ -77,7 +78,8 @@ class MyWin(QtWidgets.QMainWindow):
             break
 
     def search_func(self):
-        SearchWin.initUI(globals()['sew'])
+        # SearchWin.initUI(globals()['sew'])
+        globals()['sew'].show()
 
 
 class ErrorWinName(QtWidgets.QWidget):
@@ -163,29 +165,36 @@ class SuccessWin(QtWidgets.QWidget):
 
 class SearchWin(QtWidgets.QMainWindow):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        
+        QtWidgets.QWidget.__init__(self, parent)
+        self.ui = Ui_SearchWin()
+        self.ui.setupUi(self)
+#         super().__init__()
 
-    def initUI(self):
-        col_headers = ['Изделие', 'ФИО', 'Телефон', 'Примечания', 'Дата', 'Принял']
-        self.setGeometry(700, 400, 800, 500)
-        self.setWindowTitle('Заявки')
-        # self.lab_start_phone = QtWidgets.QLabel(self.centralWidget)
-        # self.lab_start_phone.setGeometry(QtCore.QRect(30, 220, 21, 31))
-        # self.lab_start_phone.setObjectName("lab_start_phone")
-        self.form_widget = SearchTable(50, 6)
-        self.form_widget.setHorizontalHeaderLabels(col_headers)
-        self.setCentralWidget(self.form_widget)
-        self.show()
+#     def initUI(self):
+#         # self.centralWidget = QtWidgets.Qwidget(SearchWin)
 
-class SearchTable(QtWidgets.QTableWidget):
+#         col_headers = ['Изделие', 'ФИО', 'Телефон', 'Примечания', 
+#         'Дата', 'Принял']
+#         self.setGeometry(700, 400, 800, 500)
+#         self.setWindowTitle('Заявки')
+#         self.form_widget = SearchTable(50, 6)
+#         self.form_widget.setHorizontalHeaderLabels(col_headers)
+#         self.setCentralWidget(self.form_widget)
+#         # self.lab_start_phone = QtWidgets.QLabel(self.centralWidget)
+#         # self.lab_start_phone.setGeometry(QtCore.QRect(30, 220, 21, 31))
+#         # self.lab_start_phone.setObjectName("lab_start_phone")
+#         self.show()
 
-    def __init__(self, r, c):
-        super().__init__(r, c)
-        self.initUI()
+# class SearchTable(QtWidgets.QTableWidget):
 
-    def initUI(self):
-        self.show()
+#     def __init__(self, r, c):
+#         super().__init__(r, c)
+#         self.initUI()
+
+#     def initUI(self):
+#         self.show()
         
 
 def main_cycle():

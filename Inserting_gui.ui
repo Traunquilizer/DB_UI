@@ -27,16 +27,6 @@
      <string>+7</string>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="textf_name">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>160</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QDateEdit" name="dateEdit">
     <property name="geometry">
      <rect>
@@ -45,6 +35,18 @@
       <width>110</width>
       <height>32</height>
      </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::MonthSection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>d/M/yy</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="lab_stuff">
@@ -112,16 +114,6 @@
      <string>Принять в ремонт</string>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="textf_product_name">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPlainTextEdit" name="textf_stuff">
     <property name="geometry">
      <rect>
@@ -171,16 +163,6 @@
      <string>ФИО</string>
     </property>
    </widget>
-   <widget class="QPlainTextEdit" name="textf_phone">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>220</y>
-      <width>191</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QComboBox" name="cBox_receiver">
     <property name="geometry">
      <rect>
@@ -203,6 +185,41 @@
       <string>Бруй В.И.</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Шаповалова Н.А.</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLineEdit" name="line_product_name">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>100</y>
+      <width>211</width>
+      <height>32</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="line_name">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>160</y>
+      <width>211</width>
+      <height>32</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="line_phone">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>220</y>
+      <width>191</width>
+      <height>32</height>
+     </rect>
+    </property>
    </widget>
   </widget>
  </widget>

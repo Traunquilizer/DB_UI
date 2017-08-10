@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SearchWin</class>
+ <widget class="QWidget" name="SearchWin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>670</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="search_button">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>10</y>
+     <width>111</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Найти</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="line_search">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>241</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Поиск</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_search_by">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>10</y>
+     <width>81</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Поиск по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_sort_by">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>10</y>
+     <width>83</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сортировка по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget_applications">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>60</y>
+     <width>631</width>
+     <height>321</height>
+    </rect>
+   </property>
+   <property name="rowCount">
+    <number>2</number>
+   </property>
+   <row/>
+   <row/>
+   <column>
+    <property name="text">
+     <string>Дата</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Изделие</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>ФИО</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Телефон</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Примечания</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Принял</string>
+    </property>
+   </column>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
