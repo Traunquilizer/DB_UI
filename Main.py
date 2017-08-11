@@ -170,6 +170,8 @@ class SearchWin(QtWidgets.QMainWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_SearchWin()
         self.ui.setupUi(self)
+        raw_num = db.Applications.count()
+        self.ui.tableWidget_applications.setRowCount(raw_num)
 #         super().__init__()
 
 #     def initUI(self):

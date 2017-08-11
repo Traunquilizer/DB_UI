@@ -64,4 +64,3 @@ class Ui_SearchWin(object):
         item.setText(_translate("SearchWin", "Примечания"))
         item = self.tableWidget_applications.horizontalHeaderItem(5)
         item.setText(_translate("SearchWin", "Принял"))
-
