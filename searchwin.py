@@ -25,7 +25,7 @@ class Ui_SearchWin(object):
         self.comboBox_sort_by.setGeometry(QtCore.QRect(350, 10, 83, 32))
         self.comboBox_sort_by.setObjectName("comboBox_sort_by")
         self.tableWidget_applications = QtWidgets.QTableWidget(SearchWin)
-        self.tableWidget_applications.setGeometry(QtCore.QRect(0, 60, 631, 321))
+        self.tableWidget_applications.setGeometry(QtCore.QRect(0, 60, 661, 321))
         self.tableWidget_applications.setRowCount(2)
         self.tableWidget_applications.setObjectName("tableWidget_applications")
         self.tableWidget_applications.setColumnCount(6)
@@ -47,7 +47,7 @@ class Ui_SearchWin(object):
 
     def retranslateUi(self, SearchWin):
         _translate = QtCore.QCoreApplication.translate
-        SearchWin.setWindowTitle(_translate("SearchWin", "Form"))
+        SearchWin.setWindowTitle(_translate("SearchWin", "Поиск по принятым заявкам"))
         self.search_button.setText(_translate("SearchWin", "Найти"))
         self.line_search.setText(_translate("SearchWin", "Поиск"))
         self.comboBox_search_by.setWhatsThis(_translate("SearchWin", "<html><head/><body><p>Поиск по ...</p></body></html>"))
@@ -64,3 +64,4 @@ class Ui_SearchWin(object):
         item.setText(_translate("SearchWin", "Примечания"))
         item = self.tableWidget_applications.horizontalHeaderItem(5)
         item.setText(_translate("SearchWin", "Принял"))
+

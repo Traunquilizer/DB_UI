@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Поиск по принятым заявкам</string>
   </property>
   <widget class="QPushButton" name="search_button">
    <property name="geometry">
@@ -70,7 +70,7 @@
     <rect>
      <x>0</x>
      <y>60</y>
-     <width>631</width>
+     <width>661</width>
      <height>321</height>
     </rect>
    </property>
