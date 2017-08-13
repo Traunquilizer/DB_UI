@@ -51,6 +51,10 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Изделие': self.product_name, 
                                     u'Примечания': self.stuff,
                                     u'Дата': date })
+        if not db.Applicants.find_one({u'Клиент': self.name, 
+            u'Телефон': self.phone}):
+            db.Applicants.insert_one({u'Клиент': self.name, 
+                u'Телефон': self.phone})
         self.win_clear()
         SuccessWin.initUI(globals()['suw'])
                   
@@ -170,34 +174,46 @@ class SearchWin(QtWidgets.QMainWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_SearchWin()
         self.ui.setupUi(self)
+        alist = []
+        for i in db.Applications.find():
+            alist.append(i)
+        print(alist)
+        # self.tabledata, header, self
+        table_model = ApplicationsTableModel()
+        self.ui.tableView_applications.setModel(table_model)
         raw_num = db.Applications.count()
-        self.ui.tableWidget_applications.setRowCount(raw_num)
-#         super().__init__()
 
-#     def initUI(self):
-#         # self.centralWidget = QtWidgets.Qwidget(SearchWin)
+class ApplicationsTableModel(QtCore.QAbstractTableModel):
 
-#         col_headers = ['Изделие', 'ФИО', 'Телефон', 'Примечания', 
-#         'Дата', 'Принял']
-#         self.setGeometry(700, 400, 800, 500)
-#         self.setWindowTitle('Заявки')
-#         self.form_widget = SearchTable(50, 6)
-#         self.form_widget.setHorizontalHeaderLabels(col_headers)
-#         self.setCentralWidget(self.form_widget)
-#         # self.lab_start_phone = QtWidgets.QLabel(self.centralWidget)
-#         # self.lab_start_phone.setGeometry(QtCore.QRect(30, 220, 21, 31))
-#         # self.lab_start_phone.setObjectName("lab_start_phone")
-#         self.show()
+    def __init__(self, datain = [['11', '12'], ['21', '22']], headerdata = ['head1', 'head2'], parent = None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+        self.arraydata = datain
+        self.headerdata = headerdata
 
-# class SearchTable(QtWidgets.QTableWidget):
+    def rowCount(self, parent):
+        return len(self.arraydata)
 
-#     def __init__(self, r, c):
-#         super().__init__(r, c)
-#         self.initUI()
+    def columnCount(self, parent):
+        if len(self.arraydata) > 0: 
+            return len(self.arraydata[0]) 
+        return 0
 
-#     def initUI(self):
-#         self.show()
-        
+    def headerData(self, section, orientation, role):
+        if orientation == QtCore.Qt.Horizontal and \
+        role == QtCore.Qt.DisplayRole:
+            return QtCore.QVariant(self.headerdata[section])
+        elif orientation == QtCore.Qt.Vertical and \
+        role == QtCore.Qt.DisplayRole:
+            return QtCore.QAbstractTableModel.headerData(self, section, \
+                orientation, role)
+    
+    def data(self, index, role):
+        if not index.isValid():
+            return QtCore.QVariant()
+        elif role != QtCore.Qt.DisplayRole:
+            return QtCore.QVariant()
+        return QtCore.QVariant(self.arraydata[index.row()][index.column()])
+
 
 def main_cycle():
     if __name__=="__main__":        
@@ -210,7 +226,7 @@ def main_cycle():
         globals()['suw'] = SuccessWin()
         globals()['sew'] = SearchWin()
         myapp.show()
-        sys.exit(app.exec_())       
+        sys.exit(app.exec_())
 
 thread_server = threading.Thread( target = server, name = 'server')
 thread_main = threading.Thread( target = main_cycle, name = 'main cycle')

@@ -35,8 +35,8 @@
      <height>32</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Поиск</string>
+   <property name="inputMethodHints">
+    <set>Qt::ImhHiddenText</set>
    </property>
   </widget>
   <widget class="QComboBox" name="comboBox_search_by">
@@ -65,50 +65,15 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сортировка по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QTableWidget" name="tableWidget_applications">
+  <widget class="QTableView" name="tableView_applications">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>60</y>
-     <width>661</width>
+     <width>631</width>
      <height>321</height>
     </rect>
    </property>
-   <property name="rowCount">
-    <number>2</number>
-   </property>
-   <row/>
-   <row/>
-   <column>
-    <property name="text">
-     <string>Дата</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Изделие</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>ФИО</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Телефон</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Примечания</string>
-    </property>
-   </column>
-   <column>
-    <property name="text">
-     <string>Принял</string>
-    </property>
-   </column>
   </widget>
  </widget>
  <resources/>
