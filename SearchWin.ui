@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
+    <width>843</width>
     <height>400</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="search_button">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>710</x>
      <y>10</y>
      <width>111</width>
      <height>34</height>
@@ -31,7 +31,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>241</width>
+     <width>401</width>
      <height>32</height>
     </rect>
    </property>
@@ -42,9 +42,9 @@
   <widget class="QComboBox" name="comboBox_search_by">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>440</x>
      <y>10</y>
-     <width>81</width>
+     <width>121</width>
      <height>32</height>
     </rect>
    </property>
@@ -55,9 +55,9 @@
   <widget class="QComboBox" name="comboBox_sort_by">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>570</x>
      <y>10</y>
-     <width>83</width>
+     <width>131</width>
      <height>32</height>
     </rect>
    </property>
@@ -70,9 +70,12 @@
     <rect>
      <x>0</x>
      <y>60</y>
-     <width>631</width>
+     <width>831</width>
      <height>321</height>
     </rect>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

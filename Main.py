@@ -33,12 +33,14 @@ class MyWin(QtWidgets.QMainWindow):
         self.ui.button_search.clicked.connect(self.search_func)
 
     def win_clear(self):
+
             self.ui.line_product_name.setText('')
             self.ui.line_name.setText('')
-            self.ui.line_stuff.setText('')
+            self.ui.textf_stuff.setPlainText('')
             self.ui.line_phone.setText('')
 
     def insert_func(self):
+
         temp_var = self.ui.dateEdit.date()
         date = int(str(temp_var.toPyDate())[0:4] +\
          str(temp_var.toPyDate())[5:7] +\
@@ -51,10 +53,14 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Изделие': self.product_name, 
                                     u'Примечания': self.stuff,
                                     u'Дата': date })
+
         if not db.Applicants.find_one({u'Клиент': self.name, 
-            u'Телефон': self.phone}):
+                                       u'Телефон': self.phone}):
             db.Applicants.insert_one({u'Клиент': self.name, 
-                u'Телефон': self.phone})
+                                      u'Телефон': self.phone})
+
+        globals()['sew'].create_table()
+
         self.win_clear()
         SuccessWin.initUI(globals()['suw'])
                   
@@ -64,18 +70,18 @@ class MyWin(QtWidgets.QMainWindow):
             self.product_name = self.ui.line_product_name.text()
             self.name = self.ui.line_name.text()
             self.receiver = str(self.ui.cBox_receiver.currentText())
-            self.stuff = self.ui.line_stuff.text()
+            self.stuff = self.ui.textf_stuff.toPlainText()
             self.phone = self.ui.line_phone.text()
             if not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
                 ErrorWinName.initUI(globals()['ern'])
                 break 
-            elif self.product_name =='':
+            elif self.product_name == '' :
                 ErrorWinProdName.initUI(globals()['ewp'])
                 break               
             elif not re.match(pattern_phone, self.phone):
                 ErrorWinPhone.initUI(globals()['erp'])
                 break
-            elif self.stuff =='':
+            elif self.stuff == '' :
                 ErrorWinStuff.initUI(globals()['ers'])
                 break
             self.insert_func()
@@ -174,18 +180,25 @@ class SearchWin(QtWidgets.QMainWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_SearchWin()
         self.ui.setupUi(self)
-        alist = []
+        self.create_table()     
+
+    def get_data(self):
+        datalist = []
         for i in db.Applications.find():
-            alist.append(i)
-        print(alist)
-        # self.tabledata, header, self
-        table_model = ApplicationsTableModel()
+            datalist.append([i['ФИО'], i['Телефон'], i['Изделие'], 
+                             i['Примечания'], i['Дата'], i['Принял']])
+        return datalist
+
+    def create_table(self):
+        datalist = self.get_data()
+        header = ['ФИО', 'Телефон', 'Изделие', 'Примечания', 'Дата', 'Принял']
+        table_model = ApplicationsTableModel(datalist, header, self)
         self.ui.tableView_applications.setModel(table_model)
-        raw_num = db.Applications.count()
 
 class ApplicationsTableModel(QtCore.QAbstractTableModel):
 
-    def __init__(self, datain = [['11', '12'], ['21', '22']], headerdata = ['head1', 'head2'], parent = None):
+    def __init__(self, datain = [['11', '12'], ['21', '22']], \
+        headerdata = ['head1', 'head2'], parent = None):
         QtCore.QAbstractTableModel.__init__(self, parent)
         self.arraydata = datain
         self.headerdata = headerdata
@@ -193,6 +206,7 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
     def rowCount(self, parent):
         return len(self.arraydata)
 
+# ПЕРЕОПРЕДЕЛИТЬ!
     def columnCount(self, parent):
         if len(self.arraydata) > 0: 
             return len(self.arraydata[0]) 
