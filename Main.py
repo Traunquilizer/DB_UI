@@ -172,7 +172,6 @@ class SuccessWin(QtWidgets.QWidget):
         self.show()
 
 
-
 class SearchWin(QtWidgets.QMainWindow):
 
     def __init__(self, parent = None):
@@ -185,15 +184,20 @@ class SearchWin(QtWidgets.QMainWindow):
     def get_data(self):
         datalist = []
         for i in db.Applications.find():
-            datalist.append([i['ФИО'], i['Телефон'], i['Изделие'], 
-                             i['Примечания'], i['Дата'], i['Принял']])
+            datalist.append([i['ФИО'], '+7 ' + str(i['Телефон']), i['Изделие'], 
+                             i['Примечания'], str(i['Дата'])[6:] + '/' +
+                             str(i['Дата'])[4:6] + '/' + 
+                             str(i['Дата'])[0:4], i['Принял'], str(i['_id'])])
         return datalist
 
     def create_table(self):
         datalist = self.get_data()
-        header = ['ФИО', 'Телефон', 'Изделие', 'Примечания', 'Дата', 'Принял']
+        header = ['ФИО', 'Телефон', 'Изделие', 'Примечания', 'Дата', 'Принял', 
+        'id']
         table_model = ApplicationsTableModel(datalist, header, self)
         self.ui.tableView_applications.setModel(table_model)
+        self.ui.tableView_applications.setItemDelegateForColumn(3, Delegate(self))
+
 
 class ApplicationsTableModel(QtCore.QAbstractTableModel):
 
@@ -227,6 +231,29 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
         elif role != QtCore.Qt.DisplayRole:
             return QtCore.QVariant()
         return QtCore.QVariant(self.arraydata[index.row()][index.column()])
+
+    def flags(self, index):
+        if (index.column() == 3):
+            return QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled |\
+            QtCore.Qt.ItemIsSelectable
+        else:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+
+# QtWidgets.QItemDelegate
+
+class Delegate(QtWidgets.QStyledItemDelegate):
+
+    def __init__(self, parent):
+        QtWidgets.QStyledItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, options, index):
+        return QtWidgets.QPlainTextEdit(parent)
+
+    def setEditorData(self, editor, index):
+        editor.setPlainText(index.data())
+
+    def setModelData(self, editor, model, index):
+        model.setData(index, editor.toPlainText())
 
 
 def main_cycle():
