@@ -3,6 +3,7 @@ import re
 import sys
 import os
 import pymongo
+from bson.objectid import ObjectId
 # Импортируем наш интерфейс из файла
 from name import *
 from searchwin import *
@@ -194,8 +195,8 @@ class SearchWin(QtWidgets.QMainWindow):
         datalist = self.get_data()
         header = ['ФИО', 'Телефон', 'Изделие', 'Примечания', 'Дата', 'Принял', 
         'id']
-        table_model = ApplicationsTableModel(datalist, header, self)
-        self.ui.tableView_applications.setModel(table_model)
+        model = ApplicationsTableModel(datalist, header, self)
+        self.ui.tableView_applications.setModel(model)
         self.ui.tableView_applications.setItemDelegateForColumn(3, Delegate(self))
 
 
@@ -253,7 +254,17 @@ class Delegate(QtWidgets.QStyledItemDelegate):
         editor.setPlainText(index.data())
 
     def setModelData(self, editor, model, index):
-        model.setData(index, editor.toPlainText())
+        # model.setData(index, editor.toPlainText())
+        identification = model.index(index.row(), 6).data()
+        new_data = editor.toPlainText()
+        db.Applications.find_one_and_update({'_id': ObjectId(identification)}, 
+            { '$set' : {'Примечания': new_data}})
+        #, return_document = ReturnDocument.AFTER)
+        a = db.Applications.find_one({'_id': ObjectId(identification)})
+        print(str(a))
+        print(editor.toPlainText())
+        print(str(identification))
+        globals()['sew'].create_table()
 
 
 def main_cycle():
