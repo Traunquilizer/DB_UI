@@ -7,14 +7,15 @@ from bson.objectid import ObjectId
 # Импортируем наш интерфейс из файла
 from name import *
 from searchwin import *
+from dialogwins import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 client = pymongo.MongoClient()
 db = client.Architecht
 
 def server():
-    # путь прописывается индивидуально, либо
-    # при значении пути по умолчанию аргумент опускается
+    '''путь прописывается индивидуально, либо
+    при значении пути по умолчанию аргумент опускается'''
     os.system('mongod'+' --dbpath /var/lib/mongodb')
 
 
@@ -25,6 +26,11 @@ class MyWin(QtWidgets.QMainWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.get_data()
+        globals()['completer'] = QtWidgets.QCompleter(globals()['model'])        
+        self.ui.line_name.setCompleter(globals()['completer'])
+        # globals()['completer'].setModel(globals()['model'])
 
         # вставить в файл интерфейса
         # self.dateEdit.setDateTime(QtCore.QDateTime.currentDateTime())
@@ -53,12 +59,19 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Принял': self.receiver,
                                     u'Изделие': self.product_name, 
                                     u'Примечания': self.stuff,
-                                    u'Дата': date })
+                                    u'Дата': date,
+                                    u'Местоположение': '', 
+                                    u'Передал в ремонт': '',
+                                    u'Работнику': '',
+                                    u'Перечень работ': '',
+                                    u'Дата завершения': '',
+                                    u'Статус': ''})
 
         if not db.Applicants.find_one({u'Клиент': self.name, 
                                        u'Телефон': self.phone}):
             db.Applicants.insert_one({u'Клиент': self.name, 
                                       u'Телефон': self.phone})
+            self.get_data()
 
         globals()['sew'].create_table()
 
@@ -93,84 +106,12 @@ class MyWin(QtWidgets.QMainWindow):
         globals()['sew'].show()
 
 
-class ErrorWinName(QtWidgets.QWidget):
+# class CompleterModel(QtWidgets.QAbstractItemModel):
+    @staticmethod
+    def get_data():
+        for i in db.Applicants.find():
+            globals()['model'].append(i['Клиент'])
 
-    def __init__(self):
-        super().__init__()
-        # self.initUI()
-
-    def initUI(self):
-        # self.center()
-        self.lbl = QtWidgets.QLabel( 'Неправильно введено ФИО' , self)
-        self.lbl.move(40, 40)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorWinPhone(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-        # self.initUI()
-
-    def initUI(self):
-        # self.center()
-        self.lbl = QtWidgets.QLabel( 'Неправильно введен номер' , self)
-        self.lbl.move(40, 40)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorWinStuff(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-        # self.initUI()
-
-    def initUI(self):
-        # self.center()
-        self.lbl = QtWidgets.QLabel( 'Не введены примечания' , self)
-        self.lbl.move(40, 40)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorWinProdName(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-        # self.initUI()
-
-    def initUI(self):
-        # self.center()
-        self.lbl = QtWidgets.QLabel( 'Не введено название изделия' , self)
-        self.lbl.move(40, 40)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class SuccessWin(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-        # self.initUI()
-
-    def initUI(self):
-        # self.center()
-        self.lbl = QtWidgets.QLabel( 'Заявка успешно сохранена' , self)
-        self.lbl.move(40, 40)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Выполнено')
-        self.show()
 
 
 class SearchWin(QtWidgets.QMainWindow):
@@ -188,22 +129,26 @@ class SearchWin(QtWidgets.QMainWindow):
             datalist.append([i['ФИО'], '+7 ' + str(i['Телефон']), i['Изделие'], 
                              i['Примечания'], str(i['Дата'])[6:] + '/' +
                              str(i['Дата'])[4:6] + '/' + 
-                             str(i['Дата'])[0:4], i['Принял'], str(i['_id'])])
+                             str(i['Дата'])[0:4], i['Принял'], 
+                             i['Местоположение'], i['Передал в ремонт'], 
+                             i['Работнику'], i['Перечень работ'], 
+                             i['Дата завершения'], i['Статус'], str(i['_id'])])
         return datalist
 
     def create_table(self):
         datalist = self.get_data()
         header = ['ФИО', 'Телефон', 'Изделие', 'Примечания', 'Дата', 'Принял', 
-        'id']
-        model = ApplicationsTableModel(datalist, header, self)
-        self.ui.tableView_applications.setModel(model)
+        'Место', 'Передал', 'Работнику', 'Перечень работ', 
+        'Дата завершения', 'Статус', 'id']
+        table_model = ApplicationsTableModel(datalist, header, self)
+        self.ui.tableView_applications.setModel(table_model)
         self.ui.tableView_applications.setItemDelegateForColumn(3, Delegate(self))
 
 
 class ApplicationsTableModel(QtCore.QAbstractTableModel):
 
-    def __init__(self, datain = [['11', '12'], ['21', '22']], \
-        headerdata = ['head1', 'head2'], parent = None):
+    def __init__(self, datain, headerdata, parent = None):
+        # Datain is list of lists tabledata, headerdata is a string list
         QtCore.QAbstractTableModel.__init__(self, parent)
         self.arraydata = datain
         self.headerdata = headerdata
@@ -211,11 +156,8 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
     def rowCount(self, parent):
         return len(self.arraydata)
 
-# ПЕРЕОПРЕДЕЛИТЬ!
     def columnCount(self, parent):
-        if len(self.arraydata) > 0: 
-            return len(self.arraydata[0]) 
-        return 0
+        return 13
 
     def headerData(self, section, orientation, role):
         if orientation == QtCore.Qt.Horizontal and \
@@ -229,9 +171,18 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         if not index.isValid():
             return QtCore.QVariant()
-        elif role != QtCore.Qt.DisplayRole:
+        elif role != QtCore.Qt.DisplayRole: 
             return QtCore.QVariant()
         return QtCore.QVariant(self.arraydata[index.row()][index.column()])
+
+    def setData(self, index, value, role=QtCore.Qt.EditRole):
+        if index.isValid():
+            if role == QtCore.Qt.EditRole:
+                row = index.row()
+                column = index.column()
+                self.arraydata[row][column] = value
+                return True
+        return False
 
     def flags(self, index):
         if (index.column() == 3):
@@ -240,7 +191,16 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
         else:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
-# QtWidgets.QItemDelegate
+    def resizeEvent(self, event):
+    # Resize all sections to content and user interactive
+        super(Table, self).resizeEvent(event)
+        header = self.horizontalHeader()
+        for column in range(header.count()):
+            header.setSectionResizeMode(column, QHeaderView.ResizeToContents)
+            width = header.sectionSize(column)
+            header.setSectionResizeMode(column, QHeaderView.Interactive)
+            header.resizeSection(column, width)
+
 
 class Delegate(QtWidgets.QStyledItemDelegate):
 
@@ -254,12 +214,17 @@ class Delegate(QtWidgets.QStyledItemDelegate):
         editor.setPlainText(index.data())
 
     def setModelData(self, editor, model, index):
-        # model.setData(index, editor.toPlainText())
-        identification = model.index(index.row(), 6).data()
+        model.setData(index, editor.toPlainText())
+        identification = model.index(index.row(), 14).data()
         new_data = editor.toPlainText()
+        # if index.column == примечания:
+
         db.Applications.find_one_and_update({'_id': ObjectId(identification)}, 
             { '$set' : {'Примечания': new_data}})
+
         #, return_document = ReturnDocument.AFTER)
+
+        # elif ... the rest of columns the same way
         a = db.Applications.find_one({'_id': ObjectId(identification)})
         print(str(a))
         print(editor.toPlainText())
@@ -270,13 +235,16 @@ class Delegate(QtWidgets.QStyledItemDelegate):
 def main_cycle():
     if __name__=="__main__":        
         app = QtWidgets.QApplication(sys.argv)
+        globals()['model'] = []
+        globals()['completer'] = QtWidgets.QCompleter(globals()['model'])
+        # globals()['model'] = CompleterModel()
         myapp = MyWin()
         globals()['ern'] = ErrorWinName()
         globals()['erp'] = ErrorWinPhone()
         globals()['ers'] = ErrorWinStuff()
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
-        globals()['sew'] = SearchWin()
+        globals()['sew'] = SearchWin() 
         myapp.show()
         sys.exit(app.exec_())
 
