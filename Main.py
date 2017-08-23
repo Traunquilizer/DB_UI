@@ -33,18 +33,18 @@ class MyWin(QtWidgets.QMainWindow):
         self.completer_p = QtWidgets.QCompleter(self.list_client[1])
         self.ui.line_phone.setCompleter(self.completer_p)
 
-        # globals()['completer'].setModel(globals()['model'])
-
         # вставить в файл интерфейса
         # self.dateEdit.setDateTime(QtCore.QDateTime.currentDateTime())
         # self.dateEdit.setCalendarPopup(True)
+
         self.completer.activated.connect(self.complete_phone)
         self.ui.button_proceed.clicked.connect(self.check_func)
         self.ui.button_search.clicked.connect(self.search_func)
 
     def complete_phone(self):
         self.name = self.ui.line_name.text()
-        phone = db.Applicants.find_one({'Клиент': self.name})['Телефон']
+        phone = db.Applicants.find_one({'Клиент': self.name})['Телефон']    
+        #ДУБЛИРУЮТСЯ ДАННЫЕ! ПЕРЕПИСАТЬ!
         self.ui.line_phone.setText(phone)
         return print(phone)
 
@@ -59,8 +59,6 @@ class MyWin(QtWidgets.QMainWindow):
         date = int(str(temp_var.toPyDate())[0:4] +\
          str(temp_var.toPyDate())[5:7] +\
          str(temp_var.toPyDate())[8:])
-        print(type(date))
-
         db.Applications.insert_one({u'ФИО': self.name,
                                     u'Телефон': self.phone,
                                     u'Принял': self.receiver,
@@ -73,19 +71,20 @@ class MyWin(QtWidgets.QMainWindow):
                                     u'Перечень работ': '',
                                     u'Дата завершения': '',
                                     u'Статус': ''})
-
+        # ПОПРОБОВАТЬ РЕАЛИЗОВАТЬ ОБНОВЛЕНИЕ СТАРЫХ ЗАПИСЕЙ
         if not db.Applicants.find_one({'Клиент': self.name, 
                                        'Телефон': self.phone}):
             db.Applicants.insert_one({u'Клиент': self.name, 
                                       u'Телефон': self.phone})
-            self.list_name = get_data('client')
-            self.completer = QtWidgets.QCompleter(self.list_client[0])        
-            self.ui.line_name.setCompleter(self.completer)
-
+            self.reset_completers()
         globals()['sew'].create_table()
-
         self.win_clear()
         SuccessWin.initUI(globals()['suw'])
+
+    def reset_completers(self):
+        self.list_name = get_data('client')
+        self.completer = QtWidgets.QCompleter(self.list_client[0])        
+        self.ui.line_name.setCompleter(self.completer)
                   
     def check_func(self):
         while True:
@@ -103,7 +102,6 @@ class MyWin(QtWidgets.QMainWindow):
                 break 
             elif not re.match(pattern_phone, self.phone) or len(self.phone)!=10:
                 ErrorWinPhone.initUI(globals()['erp'])
-                print(len(self.phone))
                 break
             elif self.stuff == '' :
                 ErrorWinStuff.initUI(globals()['ers'])
@@ -112,20 +110,17 @@ class MyWin(QtWidgets.QMainWindow):
             break
 
     def search_func(self):
-        # SearchWin.initUI(globals()['sew'])
         globals()['sew'].show()
 
 
 # ПОДУМАТЬ НАСЧЕТ УТОЧНЯЮЩЕГО ПАРАМЕТРА И ЕГО РЕАЛИЗАЦИИ
 def get_data(model_type):
     list_model = []
-    # adict = {'list_name': ['Клиент', 'Телефон'], 'list_prod':'Изделие'}
     if model_type== 'client':
         alist = []
         for i in db.Applicants.find():
             list_model.append(i['Клиент'])
             alist.append(i['Телефон'])
-            # globals()['model'].append(i['Клиент'])
         return [list_model, alist]
     elif model_type == 'prod':
         for i in db.Prods.find():
@@ -136,12 +131,12 @@ def get_data(model_type):
 class SearchWin(QtWidgets.QMainWindow):
 
     def __init__(self, parent = None):
-        
         QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_SearchWin()
         self.ui.setupUi(self)
         self.create_table()     
 
+        # НАПИСАТЬ ПОИСК
     def get_data(self):
         datalist = []
         for i in db.Applications.find():
@@ -235,6 +230,7 @@ class Delegate(QtWidgets.QStyledItemDelegate):
     def setEditorData(self, editor, index):
         editor.setPlainText(index.data())
 
+    # ДОПИСАТЬ!
     def setModelData(self, editor, model, index):
         # model.setData(index, editor.toPlainText())
         identification = model.index(index.row(), 12).data()
@@ -248,7 +244,6 @@ class Delegate(QtWidgets.QStyledItemDelegate):
 
         # elif ... the rest of columns the same way
         a = db.Applications.find_one({'_id': ObjectId(identification)})
-        print()
         print(editor.toPlainText())
         print(str(identification))
         globals()['sew'].create_table()
@@ -257,9 +252,6 @@ class Delegate(QtWidgets.QStyledItemDelegate):
 def main_cycle():
     if __name__=="__main__":        
         app = QtWidgets.QApplication(sys.argv)
-        # globals()['model_name'] = []
-        # globals()['completer'] = QtWidgets.QCompleter()# globals()['model_name'])
-        # globals()['model'] = CompleterModel()
         myapp = MyWin()
         globals()['ern'] = ErrorWinName()
         globals()['erp'] = ErrorWinPhone()
