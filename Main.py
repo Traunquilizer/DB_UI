@@ -37,9 +37,9 @@ class MyWin(QtWidgets.QMainWindow):
         # self.dateEdit.setDateTime(QtCore.QDateTime.currentDateTime())
         # self.dateEdit.setCalendarPopup(True)
 
-        self.completer.activated.connect(self.complete_phone)
         self.ui.button_proceed.clicked.connect(self.check_func)
         self.ui.button_search.clicked.connect(self.search_func)
+        self.completer.activated.connect(self.complete_phone)
 
     def complete_phone(self):
         self.name = self.ui.line_name.text()
@@ -59,21 +59,37 @@ class MyWin(QtWidgets.QMainWindow):
         date = int(str(temp_var.toPyDate())[0:4] +\
          str(temp_var.toPyDate())[5:7] +\
          str(temp_var.toPyDate())[8:])
-        db.Applications.insert_one({u'ФИО': self.name,
-                                    u'Телефон': self.phone,
-                                    u'Принял': self.receiver,
-                                    u'Изделие': self.product_name, 
-                                    u'Примечания': self.stuff,
-                                    u'Дата': date,
-                                    u'Местоположение': '', 
-                                    u'Передал в ремонт': '',
-                                    u'Работнику': '',
-                                    u'Перечень работ': '',
-                                    u'Дата завершения': '',
-                                    u'Статус': ''})
+        db.Applications.insert_one({'ФИО': self.name,
+                                    'Телефон': self.phone,
+                                    'Принял': self.receiver,
+                                    'Изделие': self.product_name, 
+                                    'Примечания': self.stuff,
+                                    'Дата': date,
+                                    'Местоположение': '', 
+                                    'Передал в ремонт': '',
+                                    'Работнику': '',
+                                    'Перечень работ': '',
+                                    'Дата завершения': '',
+                                    'Статус': ''})
         # ПОПРОБОВАТЬ РЕАЛИЗОВАТЬ ОБНОВЛЕНИЕ СТАРЫХ ЗАПИСЕЙ
-        if not db.Applicants.find_one({'Клиент': self.name, 
-                                       'Телефон': self.phone}):
+        if db.Applicants.find_one({'Клиент': self.name 
+            }) and not db.Applicants.find_one({u'Клиент': self.name, 
+            'Телефон': self.phone}):
+            temp_phone = '+7' + db.Applicants.find_one({'Клиент': self.name })[
+            'Телефон']
+            msg = 'Найдена запись \nКлиент: {}\nНомер: {}\n\n\nОбновить номер?'\
+            .format(self.name, temp_phone)
+            reply = QtWidgets.QMessageBox.question(self, 'Сообщение', 
+                     msg, QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                db.Applicants.find_one_and_update({'Клиент': self.name },{
+                    '$set': {'Телефон': self.phone}})
+                print(db.Applicants.find_one({u'Клиент': self.name, 
+            'Телефон': self.phone}))
+                self.reset_completers()
+            elif reply == QtWidgets.QMessageBox.No:
+                pass
+        elif not db.Applicants.find_one({'Клиент': self.name }):
             db.Applicants.insert_one({u'Клиент': self.name, 
                                       u'Телефон': self.phone})
             self.reset_completers()
@@ -83,8 +99,11 @@ class MyWin(QtWidgets.QMainWindow):
 
     def reset_completers(self):
         self.list_name = get_data('client')
-        self.completer = QtWidgets.QCompleter(self.list_client[0])        
+        self.completer = QtWidgets.QCompleter(self.list_client[0])
+        self.completer_p = QtWidgets.QCompleter(self.list_client[1])
+        self.ui.line_phone.setCompleter(self.completer_p)
         self.ui.line_name.setCompleter(self.completer)
+        self.completer.activated.connect(self.complete_phone)
                   
     def check_func(self):
         while True:
@@ -96,6 +115,7 @@ class MyWin(QtWidgets.QMainWindow):
             self.phone = self.ui.line_phone.text()
             if self.product_name == '' :
                 ErrorWinProdName.initUI(globals()['ewp'])
+                # globals()['dialogwin'].showMessage('<b>Error:</b>Wrong name<br>')
                 break               
             elif not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
                 ErrorWinName.initUI(globals()['ern'])
@@ -111,6 +131,10 @@ class MyWin(QtWidgets.QMainWindow):
 
     def search_func(self):
         globals()['sew'].show()
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Return:
+            self.check_func()
 
 
 # ПОДУМАТЬ НАСЧЕТ УТОЧНЯЮЩЕГО ПАРАМЕТРА И ЕГО РЕАЛИЗАЦИИ
@@ -258,7 +282,8 @@ def main_cycle():
         globals()['ers'] = ErrorWinStuff()
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
-        globals()['sew'] = SearchWin() 
+        globals()['sew'] = SearchWin()
+        globals()['dialogwin'] = QtWidgets.QMessageBox()
         myapp.show()
         sys.exit(app.exec_())
 

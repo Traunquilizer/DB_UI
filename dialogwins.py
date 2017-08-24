@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal, QObject, Qt
 
 class ErrorWinName(QtWidgets.QWidget):
 
@@ -14,6 +15,11 @@ class ErrorWinName(QtWidgets.QWidget):
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
+
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+            self.close()
 
 
 class ErrorWinPhone(QtWidgets.QWidget):
@@ -31,6 +37,11 @@ class ErrorWinPhone(QtWidgets.QWidget):
         self.setWindowTitle('Ошибка')
         self.show()
 
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+            self.close()
+
 
 class ErrorWinStuff(QtWidgets.QWidget):
 
@@ -46,6 +57,11 @@ class ErrorWinStuff(QtWidgets.QWidget):
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
         self.show()
+
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+            self.close()
 
 
 class ErrorWinProdName(QtWidgets.QWidget):
@@ -63,6 +79,11 @@ class ErrorWinProdName(QtWidgets.QWidget):
         self.setWindowTitle('Ошибка')
         self.show()
 
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+            self.close()
+
 
 class SuccessWin(QtWidgets.QWidget):
 
@@ -78,3 +99,8 @@ class SuccessWin(QtWidgets.QWidget):
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Выполнено')
         self.show()
+
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+            self.close()
