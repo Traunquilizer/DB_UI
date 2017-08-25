@@ -49,10 +49,10 @@ class MyWin(QtWidgets.QMainWindow):
         return print(phone)
 
     def win_clear(self):
-            self.ui.line_product_name.setText('')
-            self.ui.line_name.setText('')
-            self.ui.textf_stuff.setPlainText('')
-            self.ui.line_phone.setText('')
+        self.ui.line_product_name.setText('')
+        self.ui.line_name.setText('')
+        self.ui.textf_stuff.setPlainText('')
+        self.ui.line_phone.setText('')
 
     def insert_func(self):
         temp_var = self.ui.dateEdit.date()
@@ -115,7 +115,6 @@ class MyWin(QtWidgets.QMainWindow):
             self.phone = self.ui.line_phone.text()
             if self.product_name == '' :
                 ErrorWinProdName.initUI(globals()['ewp'])
-                # globals()['dialogwin'].showMessage('<b>Error:</b>Wrong name<br>')
                 break               
             elif not re.match( r'^\w+[ ]\w+[ ]?\w+?$', self.name):
                 ErrorWinName.initUI(globals()['ern'])
@@ -140,7 +139,7 @@ class MyWin(QtWidgets.QMainWindow):
 # ПОДУМАТЬ НАСЧЕТ УТОЧНЯЮЩЕГО ПАРАМЕТРА И ЕГО РЕАЛИЗАЦИИ
 def get_data(model_type):
     list_model = []
-    if model_type== 'client':
+    if model_type == 'client':
         alist = []
         for i in db.Applicants.find():
             list_model.append(i['Клиент'])
@@ -182,6 +181,9 @@ class SearchWin(QtWidgets.QMainWindow):
         self.ui.tableView_applications.setModel(table_model)
         self.ui.tableView_applications.setItemDelegateForColumn(3, 
             Delegate(self))
+        self.ui.tableView_applications.resizeColumnsToContents()
+        self.ui.tableView_applications.horizontalHeader().setStretchLastSection(
+            True)
 
 
 class ApplicationsTableModel(QtCore.QAbstractTableModel):
@@ -215,14 +217,24 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
         return QtCore.QVariant(self.arraydata[index.row()][index.column()])
 
     # ПЕРЕПИСАТЬ
-    def setData(self, index, value, role=QtCore.Qt.EditRole):
-        if index.isValid():
-            if role == QtCore.Qt.EditRole:
-                row = index.row()
-                column = index.column()
-                self.arraydata[row][column] = value
-                return True
-        return False
+    # def setData(self, index, value, role=QtCore.Qt.EditRole):
+        
+    def setData(self, index, value, role):
+        if index.isValid() and role == QtCore.Qt.EditRole:
+            self.arraydata[index.row()][index.column()] = QtCore.QVariant(value)
+            self.emit(QtCore.SIGNAL("dataChanged(QModelIndex, QModelIndex)"), 
+                index, index)
+            return True
+        else:
+            return False
+
+        # if index.isValid():
+        #     if role == QtCore.Qt.EditRole:
+        #         row = index.row()
+        #         column = index.column()
+        #         self.arraydata[row][column] = value
+        #         return True
+        # return False
 
     def flags(self, index):
         if (index.column() == 3):
@@ -230,17 +242,6 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
             QtCore.Qt.ItemIsSelectable
         else:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-
-    # ПЕРЕПИСАТЬ
-    def resizeEvent(self, event):
-    # Resize all sections to content and user interactive
-        super(Table, self).resizeEvent(event)
-        header = self.horizontalHeader()
-        for column in range(header.count()):
-            header.setSectionResizeMode(column, QHeaderView.ResizeToContents)
-            width = header.sectionSize(column)
-            header.setSectionResizeMode(column, QHeaderView.Interactive)
-            header.resizeSection(column, width)
 
 
 class Delegate(QtWidgets.QStyledItemDelegate):
@@ -270,7 +271,7 @@ class Delegate(QtWidgets.QStyledItemDelegate):
         a = db.Applications.find_one({'_id': ObjectId(identification)})
         print(editor.toPlainText())
         print(str(identification))
-        globals()['sew'].create_table()
+        # globals()['sew'].create_table()
 
 
 def main_cycle():
