@@ -71,7 +71,12 @@ class MyWin(QtWidgets.QMainWindow):
                                     'Перечень работ': '',
                                     'Дата завершения': '',
                                     'Статус': ''})
-        # ПОПРОБОВАТЬ РЕАЛИЗОВАТЬ ОБНОВЛЕНИЕ СТАРЫХ ЗАПИСЕЙ
+        self.update_client()            
+        globals()['sew'].create_table()
+        self.win_clear()
+        SuccessWin.initUI(globals()['suw'])
+
+    def update_client(self):
         if db.Applicants.find_one({'Клиент': self.name 
             }) and not db.Applicants.find_one({u'Клиент': self.name, 
             'Телефон': self.phone}):
@@ -92,10 +97,7 @@ class MyWin(QtWidgets.QMainWindow):
         elif not db.Applicants.find_one({'Клиент': self.name }):
             db.Applicants.insert_one({u'Клиент': self.name, 
                                       u'Телефон': self.phone})
-            self.reset_completers()
-        globals()['sew'].create_table()
-        self.win_clear()
-        SuccessWin.initUI(globals()['suw'])
+            self.reset_completers() 
 
     def reset_completers(self):
         self.list_name = get_data('client')
@@ -159,7 +161,7 @@ class SearchWin(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.create_table()     
 
-        # НАПИСАТЬ ПОИСК
+        # НАПИСАТЬ ПОИСК (self, arg = none, where =none):if arg and where==none:
     def get_data(self):
         datalist = []
         for i in db.Applications.find():
@@ -180,6 +182,9 @@ class SearchWin(QtWidgets.QMainWindow):
         table_model = ApplicationsTableModel(datalist, header, self)
         self.ui.tableView_applications.setModel(table_model)
         self.ui.tableView_applications.setItemDelegateForColumn(3, 
+            Delegate(self))
+        for i in [6,7,8,9,10,11]:
+            self.ui.tableView_applications.setItemDelegateForColumn(i, 
             Delegate(self))
         self.ui.tableView_applications.resizeColumnsToContents()
         self.ui.tableView_applications.horizontalHeader().setStretchLastSection(
@@ -237,7 +242,7 @@ class ApplicationsTableModel(QtCore.QAbstractTableModel):
         # return False
 
     def flags(self, index):
-        if (index.column() == 3):
+        if index.column() in [3, 6, 7, 8, 9, 10, 11]: # List of editable columns
             return QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled |\
             QtCore.Qt.ItemIsSelectable
         else:
@@ -250,28 +255,46 @@ class Delegate(QtWidgets.QStyledItemDelegate):
         QtWidgets.QStyledItemDelegate.__init__(self, parent)
 
     def createEditor(self, parent, options, index):
-        return QtWidgets.QPlainTextEdit(parent)
+        if index.column() == 3:
+            return QtWidgets.QPlainTextEdit(parent)
+        elif index.column() == 6:
+            combo = QtWidgets.QComboBox(parent)
+            li = []
+            for i in db.Places.find():
+                li.append(i['Место'])
+            combo.addItems(li)
+            # self.connect(combo, QtCore.SIGNAL("currentIndexChanged(int)"), self,
+             # QtCore.SLOT("currentIndexChanged()"))
+            return combo
 
     def setEditorData(self, editor, index):
-        editor.setPlainText(index.data())
+        if index.column() == 3:
+            editor.setPlainText(index.data())
+        elif index.column() == 6:
+            editor.blockSignals(True)
+            editor.setCurrentIndex(0)
+            editor.blockSignals(False)
 
     # ДОПИСАТЬ!
     def setModelData(self, editor, model, index):
         # model.setData(index, editor.toPlainText())
         identification = model.index(index.row(), 12).data()
-        new_data = editor.toPlainText()
-        # if index.column == примечания:
-
-        db.Applications.find_one_and_update({'_id': ObjectId(identification)}, 
-            { '$set' : {'Примечания': new_data}})
-
+        
+        if index.column() == 3:
+            new_data = editor.toPlainText()
+            db.Applications.find_one_and_update({'_id': 
+                ObjectId(identification)}, { '$set' : {'Примечания': new_data}})
         #, return_document = ReturnDocument.AFTER)
 
-        # elif ... the rest of columns the same way
+        elif index.column() == 6:
+            new_data = editor.currentText()
+            db.Applications.find_one_and_update({'_id':ObjectId(identification)}
+                , { '$set' : {'Местоположение': new_data}})
+
         a = db.Applications.find_one({'_id': ObjectId(identification)})
-        print(editor.toPlainText())
+        print(a)
         print(str(identification))
-        # globals()['sew'].create_table()
+        globals()['sew'].create_table()
 
 
 def main_cycle():
@@ -284,7 +307,7 @@ def main_cycle():
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
         globals()['sew'] = SearchWin()
-        globals()['dialogwin'] = QtWidgets.QMessageBox()
+        # globals()['dialogwin'] = QtWidgets.QMessageBox()
         myapp.show()
         sys.exit(app.exec_())
 
