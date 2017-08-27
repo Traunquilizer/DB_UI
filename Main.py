@@ -146,6 +146,8 @@ def get_data(model_type):
         for i in db.Applicants.find():
             list_model.append(i['Клиент'])
             alist.append(i['Телефон'])
+        list_model = list(set(list_model))
+        alist = list(set(alist))
         return [list_model, alist]
     elif model_type == 'prod':
         for i in db.Prods.find():
@@ -165,7 +167,21 @@ class SearchWin(QtWidgets.QMainWindow):
     def get_data(self):
         datalist = []
         for i in db.Applications.find():
-            datalist.append([i['ФИО'], '+7 ' + str(i['Телефон']), i['Изделие'], 
+            try:
+                datalist.append([i['ФИО'], '+7 ' + str(i['Телефон']),
+                                 i['Изделие'], 
+                                 i['Примечания'], str(i['Дата'])[6:] + '/' +
+                                 str(i['Дата'])[4:6] + '/' + 
+                                 str(i['Дата'])[0:4], i['Принял'], 
+                                 i['Местоположение'], i['Передал в ремонт'], 
+                                 i['Работнику'], i['Перечень работ'], 
+                                 str(i['Дата завершения'])[6:] + '/' +
+                                 str(i['Дата завершения'])[4:6] + '/' + 
+                                 str(i['Дата завершения'])[0:4], i['Статус'], 
+                                 str(i['_id'])])
+            except:
+                datalist.append([i['ФИО'], '+7 ' + str(i['Телефон']), 
+                             i['Изделие'], 
                              i['Примечания'], str(i['Дата'])[6:] + '/' +
                              str(i['Дата'])[4:6] + '/' + 
                              str(i['Дата'])[0:4], i['Принял'], 
@@ -257,23 +273,48 @@ class Delegate(QtWidgets.QStyledItemDelegate):
     def createEditor(self, parent, options, index):
         if index.column() == 3:
             return QtWidgets.QPlainTextEdit(parent)
-        elif index.column() == 6:
+        elif index.column() in [6, 7, 8]:
             combo = QtWidgets.QComboBox(parent)
             li = []
-            for i in db.Places.find():
-                li.append(i['Место'])
+            if index.column() == 6:
+                for i in db.Places.find():
+                    li.append(i['Место'])
+            elif index.column() == 7:
+                for i in db.Receivers.find():
+                    li.append(i['ФИО'])
+            elif index.column() == 8:
+                for i in db.Workers.find():
+                    li.append(i['ФИО'])
             combo.addItems(li)
-            # self.connect(combo, QtCore.SIGNAL("currentIndexChanged(int)"), self,
-             # QtCore.SLOT("currentIndexChanged()"))
             return combo
+        elif index.column() == 9:
+            line_jobs_done = QtWidgets.QLineEdit(parent)
+            self.list_of_jobs = []
+            for i in db.Jobs.find():
+                self.list_of_jobs.append(i['Наименование'])
+            completer = Completer(self.list_of_jobs)
+            line_jobs_done.setCompleter(completer)
+            return line_jobs_done
+        elif index.column() == 10:
+            dateEdit = QtWidgets.QDateEdit()
+            dateEdit.setGeometry(QtCore.QRect(20, 280, 110, 32))
+            dateEdit.setAutoFillBackground(False)
+            dateEdit.setCurrentSection(QtWidgets.QDateTimeEdit.MonthSection)
+            dateEdit.setDateTime(QtCore.QDateTime.currentDateTime())
+            dateEdit.setCalendarPopup(True)
+            return dateEdit
 
     def setEditorData(self, editor, index):
         if index.column() == 3:
             editor.setPlainText(index.data())
-        elif index.column() == 6:
+        elif index.column() in [6,7,8]:
             editor.blockSignals(True)
             editor.setCurrentIndex(0)
             editor.blockSignals(False)
+        elif index.column() == 9:
+            editor.setText(index.data())
+        elif index.column() == 10:
+            editor.setCurrentSection(QtWidgets.QDateTimeEdit.MonthSection)
 
     # ДОПИСАТЬ!
     def setModelData(self, editor, model, index):
@@ -284,17 +325,62 @@ class Delegate(QtWidgets.QStyledItemDelegate):
             new_data = editor.toPlainText()
             db.Applications.find_one_and_update({'_id': 
                 ObjectId(identification)}, { '$set' : {'Примечания': new_data}})
-        #, return_document = ReturnDocument.AFTER)
-
         elif index.column() == 6:
             new_data = editor.currentText()
             db.Applications.find_one_and_update({'_id':ObjectId(identification)}
                 , { '$set' : {'Местоположение': new_data}})
-
+        elif index.column() == 7:
+            new_data = editor.currentText()
+            db.Applications.find_one_and_update({'_id':ObjectId(identification)}
+                , { '$set' : {'Передал в ремонт' : new_data}})
+        elif index.column() == 8:
+            new_data  = editor.currentText()
+            db.Applications.find_one_and_update({'_id':ObjectId(identification)}
+                , { '$set' : {'Работнику' : new_data}})
+        elif index.column() == 9:
+            new_data = editor.text()
+            for i in new_data.split(', '):
+                if not i in self.list_of_jobs:
+                    return ErrorWinPhone.initUI(globals()['erp'])
+            db.Applications.find_one_and_update({'_id':ObjectId(identification)}
+                , { '$set' : { 'Перечень работ' : new_data }})
+        elif index.column() == 10:
+            temp_var = editor.date()
+            new_data = int(str(temp_var.toPyDate())[0:4] +\
+             str(temp_var.toPyDate())[5:7] +\
+             str(temp_var.toPyDate())[8:])
+            db.Applications.find_one_and_update({'_id':ObjectId(identification)}
+                , { '$set' : { 'Дата завершения' : new_data }})
         a = db.Applications.find_one({'_id': ObjectId(identification)})
         print(a)
         print(str(identification))
         globals()['sew'].create_table()
+
+
+class Completer(QtWidgets.QCompleter):
+
+    def __init__(self, parent=None):
+        super(Completer, self).__init__(parent)
+
+        self.setCaseSensitivity(Qt.CaseInsensitive)
+        self.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.setWrapAround(False)
+
+    # Add texts instead of replace
+    def pathFromIndex(self, index):
+        path = QtWidgets.QCompleter.pathFromIndex(self, index)
+
+        lst = str(self.widget().text()).split(',')
+
+        if len(lst) > 1:
+            path = '%s, %s' % (','.join(lst[:-1]), path)
+
+        return path
+
+    # Add operator to separate between texts
+    def splitPath(self, path):
+        path = str(path.split(',')[-1]).lstrip(' ')
+        return [path]
 
 
 def main_cycle():
