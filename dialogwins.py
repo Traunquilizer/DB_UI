@@ -8,7 +8,7 @@ class ErrorWinName(QtWidgets.QWidget):
 
     def initUI(self):
         self.lbl = QtWidgets.QLabel( 'Неправильно введено ФИО' , self)
-        self.lbl.move(40, 40)
+        self.lbl.move(35, 30)
 
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
@@ -23,7 +23,7 @@ class ErrorWinPhone(ErrorWinName):
 
     def initUI(self):
         self.lbl = QtWidgets.QLabel( 'Неправильно введен номер' , self)
-        self.lbl.move(40, 40)
+        self.lbl.move(35, 30)
 
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
@@ -34,7 +34,7 @@ class ErrorWinStuff(ErrorWinName):
 
     def initUI(self):
         self.lbl = QtWidgets.QLabel( 'Не введены примечания' , self)
-        self.lbl.move(40, 40)
+        self.lbl.move(35, 30)
 
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
@@ -45,7 +45,18 @@ class ErrorWinProdName(ErrorWinName):
 
     def initUI(self):
         self.lbl = QtWidgets.QLabel( 'Не введено название изделия' , self)
-        self.lbl.move(40, 40)
+        self.lbl.move(35, 30)
+
+        self.setGeometry(700, 400, 250, 70)
+        self.setWindowTitle('Ошибка')
+        self.show()
+
+
+class ErrorJobName(ErrorWinName):
+
+    def initUI(self):
+        self.lbl = QtWidgets.QLabel( 'Неправильно введено\n наименование работы' , self)
+        self.lbl.move(40, 20)
 
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Ошибка')
@@ -56,7 +67,7 @@ class SuccessWin(ErrorWinName):
 
     def initUI(self):
         self.lbl = QtWidgets.QLabel( 'Заявка успешно сохранена' , self)
-        self.lbl.move(40, 40)
+        self.lbl.move(35, 30)
 
         self.setGeometry(700, 400, 250, 70)
         self.setWindowTitle('Выполнено')

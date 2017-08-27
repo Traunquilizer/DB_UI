@@ -341,7 +341,7 @@ class Delegate(QtWidgets.QStyledItemDelegate):
             new_data = editor.text()
             for i in new_data.split(', '):
                 if not i in self.list_of_jobs:
-                    return ErrorWinPhone.initUI(globals()['erp'])
+                    return ErrorJobName.initUI(globals()['erj'])
             db.Applications.find_one_and_update({'_id':ObjectId(identification)}
                 , { '$set' : { 'Перечень работ' : new_data }})
         elif index.column() == 10:
@@ -393,6 +393,7 @@ def main_cycle():
         globals()['ewp'] = ErrorWinProdName()
         globals()['suw'] = SuccessWin()
         globals()['sew'] = SearchWin()
+        globals()['erj'] = ErrorJobName()
         # globals()['dialogwin'] = QtWidgets.QMessageBox()
         myapp.show()
         sys.exit(app.exec_())
