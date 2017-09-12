@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1326</width>
-    <height>488</height>
+    <width>1361</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QPushButton" name="search_button">
    <property name="geometry">
     <rect>
-     <x>710</x>
+     <x>730</x>
      <y>10</y>
-     <width>111</width>
+     <width>121</width>
      <height>34</height>
     </rect>
    </property>
@@ -31,7 +31,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>401</width>
+     <width>421</width>
      <height>32</height>
     </rect>
    </property>
@@ -39,23 +39,10 @@
     <set>Qt::ImhHiddenText</set>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox_search_by">
+  <widget class="QComboBox" name="comboBox_search_where">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>10</y>
-     <width>121</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="whatsThis">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Поиск по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox_sort_by">
-   <property name="geometry">
-    <rect>
-     <x>570</x>
+     <x>590</x>
      <y>10</y>
      <width>131</width>
      <height>32</height>
@@ -64,14 +51,44 @@
    <property name="whatsThis">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Сортировка по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <item>
+    <property name="text">
+     <string>Заявки</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Клиенты</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Приёмщики склада</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Работники</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Операции</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Изделия</string>
+    </property>
+   </item>
   </widget>
   <widget class="QTableView" name="tableView_applications">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>60</y>
-     <width>1321</width>
-     <height>421</height>
+     <width>1341</width>
+     <height>451</height>
     </rect>
    </property>
    <property name="alternatingRowColors">
@@ -79,9 +96,6 @@
    </property>
    <property name="selectionBehavior">
     <enum>QAbstractItemView::SelectItems</enum>
-   </property>
-   <property name="wordWrap">
-    <bool>false</bool>
    </property>
    <attribute name="horizontalHeaderDefaultSectionSize">
     <number>110</number>
@@ -95,6 +109,42 @@
    <attribute name="verticalHeaderMinimumSectionSize">
     <number>29</number>
    </attribute>
+  </widget>
+  <widget class="QPushButton" name="add_button">
+   <property name="geometry">
+    <rect>
+     <x>1260</x>
+     <y>10</y>
+     <width>88</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Добавить</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_sort">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>10</y>
+     <width>141</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Поиск по ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Сначала новые</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Сначала старые</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

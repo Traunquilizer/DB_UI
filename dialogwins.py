@@ -55,7 +55,7 @@ class ErrorWinProdName(ErrorWinName):
 class ErrorJobName(ErrorWinName):
 
     def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Неправильно введено\n наименование работы' , self)
+        self.lbl = QtWidgets.QLabel( 'Неправильно введено\n название операции' , self)
         self.lbl.move(40, 20)
 
         self.setGeometry(700, 400, 250, 70)
