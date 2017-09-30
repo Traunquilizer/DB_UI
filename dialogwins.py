@@ -63,6 +63,17 @@ class ErrorJobName(ErrorWinName):
         self.show()
 
 
+class ErrorJobPrice(ErrorWinName):
+
+    def initUI(self):
+        self.lbl = QtWidgets.QLabel( 'Неправильно введена\n стоимость операции' , self)
+        self.lbl.move(40, 20)
+
+        self.setGeometry(700, 400, 250, 70)
+        self.setWindowTitle('Ошибка')
+        self.show()
+
+
 class SuccessWin(ErrorWinName):
 
     def initUI(self):

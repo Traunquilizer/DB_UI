@@ -39,13 +39,16 @@ class Ui_SearchWin(object):
         self.tableView_applications.verticalHeader().setDefaultSectionSize(30)
         self.tableView_applications.verticalHeader().setMinimumSectionSize(29)
         self.add_button = QtWidgets.QPushButton(SearchWin)
-        self.add_button.setGeometry(QtCore.QRect(1260, 10, 88, 34))
+        self.add_button.setGeometry(QtCore.QRect(1150, 10, 88, 34))
         self.add_button.setObjectName("add_button")
         self.comboBox_sort = QtWidgets.QComboBox(SearchWin)
         self.comboBox_sort.setGeometry(QtCore.QRect(440, 10, 141, 32))
         self.comboBox_sort.setObjectName("comboBox_sort")
         self.comboBox_sort.addItem("")
         self.comboBox_sort.addItem("")
+        self.delete_button = QtWidgets.QPushButton(SearchWin)
+        self.delete_button.setGeometry(QtCore.QRect(1250, 10, 88, 34))
+        self.delete_button.setObjectName("delete_button")
 
         self.retranslateUi(SearchWin)
         QtCore.QMetaObject.connectSlotsByName(SearchWin)
@@ -65,4 +68,5 @@ class Ui_SearchWin(object):
         self.comboBox_sort.setWhatsThis(_translate("SearchWin", "<html><head/><body><p>Поиск по ...</p></body></html>"))
         self.comboBox_sort.setItemText(0, _translate("SearchWin", "Сначала новые"))
         self.comboBox_sort.setItemText(1, _translate("SearchWin", "Сначала старые"))
+        self.delete_button.setText(_translate("SearchWin", "Удалить"))
 
