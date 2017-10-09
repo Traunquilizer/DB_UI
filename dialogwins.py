@@ -1,85 +1,56 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import pyqtSignal, QObject, Qt
+from PyQt5 import QtWidgets, QtCore
 
-class ErrorWinName(QtWidgets.QWidget):
 
+class ErrorWin(QtWidgets.QWidget):
+    
     def __init__(self):
         super().__init__()
 
     def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Неправильно введено ФИО' , self)
+        self.lbl = QtWidgets.QLabel( self.label , self)
         self.lbl.move(35, 30)
-
         self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
+        self.setWindowTitle(self.win_title)
         self.show()
 
     def keyPressEvent(self, e):
-        if e.key() == Qt.Key_Escape or e.key() == Qt.Key_Return:
+        if e.key() == QtCore.Qt.Key_Escape or e.key() == QtCore.Qt.Key_Return:
             self.close()
 
 
-class ErrorWinPhone(ErrorWinName):
+class Ui_Form(object):
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(377, 177)
+        self.button_add = QtWidgets.QPushButton(Form)
+        self.button_add.setGeometry(QtCore.QRect(150, 130, 101, 25))
+        self.button_add.setObjectName("button_add")
+        self.button_cancel = QtWidgets.QPushButton(Form)
+        self.button_cancel.setGeometry(QtCore.QRect(260, 130, 91, 25))
+        self.button_cancel.setObjectName("button_cancel")
+        self.lineEdit_0 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_0.setGeometry(QtCore.QRect(20, 29, 331, 21))
+        self.lineEdit_0.setObjectName("lineEdit_0")
+        self.label_0 = QtWidgets.QLabel(Form)
+        self.label_0.setGeometry(QtCore.QRect(20, 10, 100, 18))
+        self.label_0.setObjectName("label_0")
+        
+        if self.field_1:
+                self.lineEdit_1 = QtWidgets.QLineEdit(Form)
+                self.lineEdit_1.setGeometry(QtCore.QRect(20, 79, 331, 21))
+                self.lineEdit_1.setObjectName("lineEdit_1")
+                self.label_1 = QtWidgets.QLabel(Form)
+                self.label_1.setGeometry(QtCore.QRect(20, 60, 100, 18))
+                self.label_1.setObjectName("label_1")
 
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Неправильно введен номер' , self)
-        self.lbl.move(35, 30)
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
 
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorWinStuff(ErrorWinName):
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Не введены примечания' , self)
-        self.lbl.move(35, 30)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorWinProdName(ErrorWinName):
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Не введено название изделия' , self)
-        self.lbl.move(35, 30)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorJobName(ErrorWinName):
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Неправильно введено\n название операции' , self)
-        self.lbl.move(40, 20)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class ErrorJobPrice(ErrorWinName):
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Неправильно введена\n стоимость операции' , self)
-        self.lbl.move(40, 20)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Ошибка')
-        self.show()
-
-
-class SuccessWin(ErrorWinName):
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( 'Заявка успешно сохранена' , self)
-        self.lbl.move(35, 30)
-
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle('Выполнено')
-        self.show()
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Форма ввода записей в базу {}".format(self.db_name)))
+        self.button_add.setText(_translate("Form", "Подтвердить"))
+        self.button_cancel.setText(_translate("Form", "Отмена"))
+        self.label_0.setText(_translate("Form", self.field_0))
+        if self.field_1:
+            self.label_1.setText(_translate("Form", self.field_1))

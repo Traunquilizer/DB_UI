@@ -6,21 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>459</height>
+    <width>521</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Приём заявок</string>
+  </property>
+  <property name="locale">
+   <locale language="Russian" country="Russia"/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="lab_start_phone">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>220</y>
+      <x>20</x>
+      <y>170</y>
       <width>21</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -31,16 +34,16 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
+      <y>220</y>
       <width>110</width>
-      <height>32</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
     <property name="currentSection">
-     <enum>QDateTimeEdit::MonthSection</enum>
+     <enum>QDateTimeEdit::DaySection</enum>
     </property>
     <property name="displayFormat">
      <string>d/M/yy</string>
@@ -48,14 +51,17 @@
     <property name="calendarPopup">
      <bool>true</bool>
     </property>
+    <property name="timeSpec">
+     <enum>Qt::LocalTime</enum>
+    </property>
    </widget>
    <widget class="QLabel" name="lab_stuff">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>70</y>
+      <x>250</x>
+      <y>50</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -65,10 +71,10 @@
    <widget class="QLabel" name="lab_phone">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>190</y>
+      <x>20</x>
+      <y>150</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -78,10 +84,10 @@
    <widget class="QLabel" name="lab_product_name">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>70</y>
+      <x>20</x>
+      <y>50</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -91,10 +97,10 @@
    <widget class="QLabel" name="lab_date">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>250</y>
+      <x>20</x>
+      <y>200</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -104,10 +110,10 @@
    <widget class="QPushButton" name="button_proceed">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>340</y>
-      <width>141</width>
-      <height>34</height>
+      <x>250</x>
+      <y>290</y>
+      <width>261</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -117,20 +123,20 @@
    <widget class="QPlainTextEdit" name="textf_stuff">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>100</y>
+      <x>250</x>
+      <y>70</y>
       <width>261</width>
-      <height>151</height>
+      <height>121</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="lab_receiver">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>250</y>
+      <x>250</x>
+      <y>200</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -142,21 +148,21 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>231</width>
-      <height>34</height>
+      <width>211</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>Поиск по принятым изделиям</string>
+     <string>Поиск по базе</string>
     </property>
    </widget>
    <widget class="QLabel" name="lab_name">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>130</y>
+      <x>20</x>
+      <y>100</y>
       <width>131</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -166,10 +172,10 @@
    <widget class="QComboBox" name="cBox_receiver">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>280</y>
-      <width>161</width>
-      <height>32</height>
+      <x>250</x>
+      <y>220</y>
+      <width>121</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="maxVisibleItems">
@@ -194,36 +200,46 @@
    <widget class="QLineEdit" name="line_product_name">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>100</y>
+      <x>20</x>
+      <y>70</y>
       <width>211</width>
-      <height>32</height>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLineEdit" name="line_name">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>160</y>
+      <x>20</x>
+      <y>120</y>
       <width>211</width>
-      <height>32</height>
+      <height>21</height>
      </rect>
     </property>
    </widget>
    <widget class="QLineEdit" name="line_phone">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>220</y>
+      <x>40</x>
+      <y>170</y>
       <width>191</width>
-      <height>32</height>
+      <height>21</height>
      </rect>
     </property>
    </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>line_product_name</tabstop>
+  <tabstop>line_name</tabstop>
+  <tabstop>line_phone</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>textf_stuff</tabstop>
+  <tabstop>cBox_receiver</tabstop>
+  <tabstop>button_proceed</tabstop>
+  <tabstop>button_search</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
