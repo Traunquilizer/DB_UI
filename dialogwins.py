@@ -1,56 +1,43 @@
 from PyQt5 import QtWidgets, QtCore
 
 
-class ErrorWin(QtWidgets.QWidget):
-    
-    def __init__(self):
-        super().__init__()
-
-    def initUI(self):
-        self.lbl = QtWidgets.QLabel( self.label , self)
-        self.lbl.move(35, 30)
-        self.setGeometry(700, 400, 250, 70)
-        self.setWindowTitle(self.win_title)
-        self.show()
-
-    def keyPressEvent(self, e):
-        if e.key() == QtCore.Qt.Key_Escape or e.key() == QtCore.Qt.Key_Return:
-            self.close()
-
-
 class Ui_Form(object):
+
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(377, 177)
-        self.button_add = QtWidgets.QPushButton(Form)
-        self.button_add.setGeometry(QtCore.QRect(150, 130, 101, 25))
-        self.button_add.setObjectName("button_add")
-        self.button_cancel = QtWidgets.QPushButton(Form)
-        self.button_cancel.setGeometry(QtCore.QRect(260, 130, 91, 25))
-        self.button_cancel.setObjectName("button_cancel")
-        self.lineEdit_0 = QtWidgets.QLineEdit(Form)
-        self.lineEdit_0.setGeometry(QtCore.QRect(20, 29, 331, 21))
-        self.lineEdit_0.setObjectName("lineEdit_0")
-        self.label_0 = QtWidgets.QLabel(Form)
-        self.label_0.setGeometry(QtCore.QRect(20, 10, 100, 18))
-        self.label_0.setObjectName("label_0")
-        
-        if self.field_1:
-                self.lineEdit_1 = QtWidgets.QLineEdit(Form)
-                self.lineEdit_1.setGeometry(QtCore.QRect(20, 79, 331, 21))
-                self.lineEdit_1.setObjectName("lineEdit_1")
-                self.label_1 = QtWidgets.QLabel(Form)
-                self.label_1.setGeometry(QtCore.QRect(20, 60, 100, 18))
-                self.label_1.setObjectName("label_1")
+        self.centralWidget = QtWidgets.QWidget(Form)
+        self.centralWidget.setObjectName("Form")
+        Form.setCentralWidget(self.centralWidget)
+        self.formLayout = QtWidgets.QFormLayout(self.centralWidget)
+        self.formLayout.setObjectName("formLayout")
 
-        self.retranslateUi(Form)
+    def creating_buttons(self, Form, counter):
+        Form.resize(377, counter*50)
+        self.buttonBox = QtWidgets.QDialogButtonBox(Form)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.formLayout.setWidget(counter, QtWidgets.QFormLayout.SpanningRole, self.buttonBox)
+        
+    def create_fields(self, Form, counter, field_widget):
+        a = 'field_' + str(counter)
+        b = 'label_' + str(counter)
+        self.__dict__[b] = QtWidgets.QLabel(Form)
+        self.__dict__[b].setObjectName(b)
+        self.formLayout.setWidget(counter, QtWidgets.QFormLayout.LabelRole, self.__dict__[b])
+        self.__dict__[a] = field_widget
+        self.__dict__[a].setObjectName(a)
+        self.formLayout.setWidget(counter, QtWidgets.QFormLayout.FieldRole, self.__dict__[a])
+
+    def start_retranslate(self, Form, disp_list):
+        self.retranslateUi(Form, disp_list)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, Form):
+    def retranslateUi(self, Form, disp_list):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Форма ввода записей в базу {}".format(self.db_name)))
-        self.button_add.setText(_translate("Form", "Подтвердить"))
-        self.button_cancel.setText(_translate("Form", "Отмена"))
-        self.label_0.setText(_translate("Form", self.field_0))
-        if self.field_1:
-            self.label_1.setText(_translate("Form", self.field_1))
+        Form.setWindowTitle(_translate("Form", self.win_title))
+        counter = 0
+        for i in disp_list:
+            a = 'label_' + str(counter)
+            self.__dict__[a].setText(_translate("Form", i))
+            counter+=1

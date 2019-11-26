@@ -1,0 +1,4 @@
+bson
+pymongo
+python-docx
+PyQt5

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import threading
 import re
 import sys
 import os
@@ -9,21 +8,32 @@ from docx import Document
 from docx.shared import Inches, Pt
 from docx.enum.style import WD_STYLE_TYPE
 from bson.objectid import ObjectId
-# Импортируем наш интерфейс из файла
+import json
+
 from name import *
-# from searchwin import *
 from yu import *
 from dialogwins import *
+from lib import *
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-client = pymongo.MongoClient()
-db = client.Architecht
+
+def server():
+    # путь прописывается индивидуально, либо
+    # при значении пути по умолчанию аргумент опускается
+    os.system('mongodb' + ' --dbpath /home/traun/mongodb')
+
+def client():
+    client = pymongo.MongoClient()
+    db = client.Architecht
 
 config = {
     'Принято': {
         'db': db.Applications,
         'id_f': 10,
-        'header': ['Дата', 'ФИО', 'Телефон', 'Изделие', 'Примечания', 'Принял', 'Место', 'Гарантийность', 'Производитель','Акт приёма', 'id'],
+        'header': ['Дата', 'ФИО', 'Телефон', 'Изделие', 'Примечания', 
+        'Принял', 'Место', 'Гарантийность', 'Производитель','Акт приёма', 
+        'id'],
         'filling_func': lambda i: [str(i['Дата'])[8:] + '/' +
                                     str(i['Дата'])[5:7] + '/' +
                                     str(i['Дата'])[0:4], 
@@ -45,12 +55,14 @@ config = {
                             'c_source': [db.Places, 'Место']}},
         'default_argument':  lambda i: {'$text' : { '$search': i }},
         'Status': 'Принято',
-        'sorting_criteria': ['Дата', 'ФИО', 'Телефон', 'Изделие', 'Примечания', 'Принял', 'Место', 'Гарантийность', 'Производитель', 'Акт приёма']
+        'sorting_criteria': ['Дата', 'ФИО', 'Телефон', 'Изделие', 'Примечания', 
+        'Принял', 'Место', 'Гарантийность', 'Производитель', 'Акт приёма']
                 },
     'В работе': {
         'db': db.Applications,
         'id_f': 7,
-        'header': ['ФИО', 'Изделие', 'Примечания', 'Место', 'Кто передал в ремонт', 'Работнику', 'Перечень работ', 'id'],
+        'header': ['ФИО', 'Изделие', 'Примечания', 'Место', 'Кто передал в ремонт', 
+        'Работнику', 'Перечень работ', 'id'],
         'filling_func': lambda i: [i['ФИО'], 
                                     i['Изделие'],
                                     i['Примечания'],
@@ -77,12 +89,14 @@ config = {
                             'c_source': [db.Jobs, 'Наименование'],
                             'cu_income': 'jobs',
                             'field': 'Перечень работ'}},
-        'sorting_criteria': ['Дата', 'Изделие', 'Примечания', 'Место', 'Передал в ремонт', 'Передано работнику', '_id']
+        'sorting_criteria': ['Дата', 'Изделие', 'Примечания', 'Место',
+        'Передал в ремонт', 'Передано работнику', '_id']
                 },
     'Завершено': {
         'db': db.Applications,
         'id_f': 8,
-        'header': ['ФИО', 'Изделие', 'Место', 'Перечень работ', 'Дата завершения', 'Цена', 'Зарплата', 'Расчёт', 'id'],
+        'header': ['ФИО', 'Изделие', 'Место', 'Перечень работ', 'Дата завершения', 
+        'Цена', 'Зарплата', 'Расчёт', 'id'],
         'filling_func': lambda i: [i['ФИО'],
                                     i['Изделие'],
                                     i['Место'], 
@@ -106,12 +120,14 @@ config = {
                             'cu_income': 'price'}},
         'default_argument':  lambda i: {'$text' : { '$search': i }},
         'Status': 'Завершено',
-        'sorting_criteria': ['Дата', 'ФИО', 'Изделие', 'Место', 'Перечень работ', 'Дата завершения', 'Цена', 'Зарплата', 'Расчёт', '_id']
+        'sorting_criteria': ['Дата', 'ФИО', 'Изделие', 'Место', 'Перечень работ', 
+        'Дата завершения', 'Цена', 'Зарплата', 'Расчёт', '_id']
                 },
     'Архив': {
         'db': db.Applications,
         'id_f': 8,
-        'header': ['ФИО', 'Изделие', 'Дата приёма', 'Примечания', 'Получатель', 'Цена', 'Расчёт', 'Дата отгрузки', 'id'],
+        'header': ['ФИО', 'Изделие', 'Дата приёма', 'Примечания', 'Получатель', 
+        'Цена', 'Расчёт', 'Дата отгрузки', 'id'],
         'filling_func': lambda i: [i['ФИО'],
                                     i['Изделие'],
                                     i['Дата'],
@@ -136,7 +152,8 @@ config = {
                             'field': 'Дата отгрузки'}},
         'default_argument':  lambda i: {'$text' : { '$search': i }},
         'Status': 'Архив',
-        'sorting_criteria': ['Дата', 'ФИО', 'Изделие', 'Архивные примечания', 'Дата отгрузки', '_id']
+        'sorting_criteria': ['Дата', 'ФИО', 'Изделие', 'Архивные примечания', 
+        'Дата отгрузки', '_id']
                 },
     'Клиенты': {
         'db': db.Applicants,
@@ -197,7 +214,8 @@ config = {
         'db': db.Jobs,
         'id_f': 3,
         'header': ['Наименование', 'Стоимость', 'Оплата работнику', 'id'],
-        'filling_func': lambda i: [i['Наименование'], i['Стоимость'],  i['Оплата работнику'], str(i['_id'])],
+        'filling_func': lambda i: [i['Наименование'], i['Стоимость'],  
+        i['Оплата работнику'], str(i['_id'])],
         'delegate_col': [0, 1, 2],
         'editing_fs': { 0: {'editor': 'line',
                             'field': 'Наименование'},
@@ -256,13 +274,18 @@ config = {
     'Акты приёма в ремонт': {
         'db': db.Checks,
         'id_f': 8,
-        'header': ['Изделия', 'Гарантийность', 'Принято от', 'Контакт', 'Примечания', 'Принял', 'Дата', 'Num', 'id'],
-        'filling_func': lambda i: [i['Изделия'], i['Гарантийность'], i['Принято от'], i['Контакт'], i['Примечания'], i['Принял'], str(i['Дата'])[8:] + '/' + str(i['Дата'])[5:7] + '/' + str(i['Дата'])[0:4], i['Num'], str(i['_id'])],
+        'header': ['Изделия', 'Гарантийность', 'Принято от', 'Контакт', 
+        'Примечания', 'Принял', 'Дата', 'Num', 'id'],
+        'filling_func': lambda i: [i['Изделия'], i['Гарантийность'], 
+        i['Принято от'], i['Контакт'], i['Примечания'], i['Принял'], 
+        str(i['Дата'])[8:] + '/' + str(i['Дата'])[5:7] + '/' + str(i['Дата'])[0:4], 
+        i['Num'], str(i['_id'])],
         'delegate_col': [],
         'fields_order': [],
         'default_argument':  lambda i: {'$text' : { '$search': i }},
         'Status': 'active',
-        'sorting_criteria': ['Изделия', 'Гарантийность', 'Принято от', 'Контакт', 'Примечания', 'Принял', 'Дата', 'Num', '_id']
+        'sorting_criteria': ['Изделия', 'Гарантийность', 'Принято от', 
+        'Контакт', 'Примечания', 'Принял', 'Дата', 'Num', '_id']
                 }
          }
 
@@ -279,17 +302,12 @@ conf_stm = {'line': lambda editor: editor.text(),
             'plain_text': lambda editor: editor.text(),
             'combo': lambda editor: editor.currentText(),
             'date': lambda editor: editor.date()}
-cu_conf = { 'price': lambda data, ident = None: new_data_prices(data),
+cu_conf =  {'price': lambda data, ident = None: new_data_prices(data),
             'date': lambda data, ident = None: new_data_date(data),
             'jobs': lambda data, ident: new_data_jobs(data, ident),
             'phone': lambda data, ident = None: new_data_phones(data),
-            'names': lambda data, ident = None: new_data_names(data),}
+            'names': lambda data, ident = None: new_data_names(data)}
 
-
-def server():
-    # путь прописывается индивидуально, либо
-    # при значении пути по умолчанию аргумент опускается
-    os.system('mongod' + ' --dbpath /var/lib/mongodb')
 
 def combo_editor_set(editor):
     editor.blockSignals(True)
@@ -335,7 +353,7 @@ def new_data_jobs(new_data, ident):
     dictof = sep_count(new_data)
     for i in dictof:
         if not db.Jobs.find_one({'Наименование': i}):
-            QtWidgets.QMessageBox.warning(sew, 'Ошибка', 'Неверно введено название операции')
+            QtWidgets.QMessageBox.warning(sew, texts_conf["error"]["title"], texts_conf["error"]["text"]["jobs"])
             return ''
         else:
             price += int(float(db.Jobs.find_one({'Наименование': i})['Стоимость']))*dictof[i][0]
@@ -346,11 +364,13 @@ def new_data_jobs(new_data, ident):
 
 def new_data_phones(new_data):
     if not re.match(r'[0-9]', new_data):
-        QtWidgets.QMessageBox.warning(sew, 'Ошибка', 'Неверно введён номер')
+        QtWidgets.QMessageBox.warning(sew, texts_conf["error"]["title"] , texts_conf["error"]["phones"])
         return ''
     elif not len(new_data) in [11, 12]:
         if not new_data[0:2]=='+7' or new_data[0] == '8' and len(new_data)==12:
-            reply = QtWidgets.QMessageBox.warning(sew, 'Внимание', 'Введенный номер {} не соответствует стандартным шаблонам \n "+7(XXX)XXX-XX-XX" / "8(XXX)XXX-XX-XX"\n\nВсё равно продолжить?'.format(new_data), QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.warning(sew, texts_conf["warning"]["title"],
+                texts_conf["warning"]["text"]["phones"].format(new_data),
+                QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
                 return new_data
             if reply == QtWidgets.QMessageBox.No:
@@ -365,71 +385,23 @@ def new_data_prices(data):
         float(data)
         return str(data)
     except ValueError:
-        QtWidgets.QMessageBox.warning(sew, 'Ошибка', 'Неправильно введена\n стоимость операции')
+        QtWidgets.QMessageBox.warning(sew, texts_conf["error"]["title"] , 
+            texts_conf["error"]["text"]["prices"])
         return None
 
 def new_data_names(data):
     if not re.match(r'^\w+[ ]\w+?$', data):
-        QtWidgets.QMessageBox.warning(sew, 'Ошибка', 'Неверно введено ФИО')
+        QtWidgets.QMessageBox.warning(sew, texts_conf["error"]["title"], 
+            texts_conf["error"]["text"]["name"])
         return None
     else:
         return data
 
 def str_date(date):
-    dat = {'01':'января', '02':'февраля', '03':'марта', '04':'апреля', '05':'мая', '06':'июня', '07':'июля', '08':'августа', '09':'сентября', '10':'октября', '11':'ноября', '12':'декабря'}
+    dat = {'01':'января', '02':'февраля', '03':'марта', '04':'апреля', '05':'мая', '06':'июня', 
+    '07':'июля', '08':'августа', '09':'сентября', '10':'октября', '11':'ноября', '12':'декабря'}
     str_date = '{} {} {}г'.format(date[8:],dat[date[5:7]],date[:4])
     return str_date
-
-def create_doc(heading, content_list, save_to, document=None):
-    if document == None:
-        document = Document()
-    else:
-        document.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH, builtin=True)
-        document.styles.add_style('Title', WD_STYLE_TYPE.PARAGRAPH, builtin=True)
-        document.styles.add_style('TableGrid', WD_STYLE_TYPE.TABLE, builtin=True)
-    document.add_heading(heading, 0)
-
-    def create_fieldline(document, field_data):
-        field = field_data[0]
-        data = str(field_data[1])
-        first_line = document.add_paragraph('')
-        first_line.add_run(field).bold = True
-        first_line.add_run('  '+data)
-
-    def create_table(document, header_contents):
-        header = header_contents[0]
-        contents = header_contents[1]
-        table = document.add_table(rows=len(contents)+1, cols=len(header))
-        table.style = 'TableGrid'
-        hdr_cells = table.rows[0].cells
-        cntr = 0
-        for i in enumerate(header):
-            hdr_cells[i[0]].text = i[1]
-        for item in enumerate(contents):
-            cntr+=1
-            for x in enumerate(header):
-                table.rows[cntr].cells[x[0]].text = str(item[1][x[0]])
-
-    conf = {'field': create_fieldline,
-            'table': create_table}
-
-    for i in content_list:
-        conf[i['type']](document, i['content'])
-
-    document.add_page_break()
-    wd = os.getcwd()
-    cwd = wd[:]
-    for i in save_to.split('/'):
-        try:
-            os.chdir(cwd+'/'+i)
-            cwd += '/'+i
-        except FileNotFoundError:
-            os.mkdir(cwd+'/'+i)
-            os.chdir(cwd+'/'+i)
-            cwd += '/'+i
-    document.save(heading + '.docx')
-    os.chdir(wd)
-    return document
 
 
 class MyWin(QtWidgets.QMainWindow):
@@ -481,16 +453,17 @@ class MyWin(QtWidgets.QMainWindow):
                                     'Зарплата': '',
                                     'Расчёт': '',
                                     'Получатель': ''})
-        sew.scaler()
+        # sew.scaler()
         self.win_clear()
         self.reset_completers()
         QtWidgets.QMessageBox.information(self, 'Выполнено', 'Заявка успешно сохранена')
 
     def update_client(self, name, phone):                                                       #обновление записи клиента
-        if db.Applicants.find_one({'Клиент': name}) and not db.Applicants.find_one({u'Клиент': name, 'Телефон': phone}):
+        if db.Applicants.find_one({'Клиент': name}) and not db.Applicants.find_one({'Клиент': name, 
+            'Телефон': phone}):
             temp_phone = db.Applicants.find_one({'Клиент': name})['Телефон']
-            msg = 'Найдена запись \nКлиент: {}\nНомер: {}\n\n\nОбновить номер?'.format(name, temp_phone)
-            reply = QtWidgets.QMessageBox.question(self, 'Сообщение', msg,
+            msg = texts_conf["message"]["text"]["upd_client"] .format(name, temp_phone)
+            reply = QtWidgets.QMessageBox.question(self, texts_conf["message"]["title"], msg,
                                                    QtWidgets.QMessageBox.Yes,
                                                    QtWidgets.QMessageBox.No)
             if reply == QtWidgets.QMessageBox.Yes:
@@ -521,6 +494,57 @@ class MyWin(QtWidgets.QMainWindow):
         for i in list(enumerate(db.Receivers.find())):
             self.ui.cBox_receiver.setItemText(i[0], _translate("MainWindow", i[1]['ФИО']))
 
+    def create_doc(self, heading, content_list, save_to, document=None):
+        if document == None:
+            document = Document()
+        else:
+            document.styles.add_style('Heading 1', WD_STYLE_TYPE.PARAGRAPH, builtin=True)
+            document.styles.add_style('Title', WD_STYLE_TYPE.PARAGRAPH, builtin=True)
+            document.styles.add_style('TableGrid', WD_STYLE_TYPE.TABLE, builtin=True)
+        document.add_heading(heading, 0)
+
+        def create_fieldline(document, field_data):
+            field = field_data[0]
+            data = str(field_data[1])
+            first_line = document.add_paragraph('')
+            first_line.add_run(field).bold = True
+            first_line.add_run('  '+data)
+
+        def create_table(document, header_contents):
+            header = header_contents[0]
+            contents = header_contents[1]
+            table = document.add_table(rows=len(contents)+1, cols=len(header))
+            table.style = 'TableGrid'
+            hdr_cells = table.rows[0].cells
+            cntr = 0
+            for i in enumerate(header):
+                hdr_cells[i[0]].text = i[1]
+            for item in enumerate(contents):
+                cntr+=1
+                for x in enumerate(header):
+                    table.rows[cntr].cells[x[0]].text = str(item[1][x[0]])
+
+        conf = {'field': create_fieldline,
+                'table': create_table}
+
+        for i in content_list:
+            conf[i['type']](document, i['content'])
+
+        document.add_page_break()
+        wd = os.getcwd()
+        cwd = wd[:]
+        for i in save_to.split('/'):
+            try:
+                os.chdir(cwd+'/'+i)
+                cwd += '/'+i
+            except FileNotFoundError:
+                os.mkdir(cwd+'/'+i)
+                os.chdir(cwd+'/'+i)
+                cwd += '/'+i
+        document.save(heading + '.docx')
+        os.chdir(wd)
+        return document
+
     def init_insert(self):                                                          #проверка корректности заполнения
         temp_var = self.ui.dateEdit.date()
         date = str(temp_var.toPyDate())
@@ -536,15 +560,17 @@ class MyWin(QtWidgets.QMainWindow):
         else:
             guarantee = 'не по гарантии'
         if not self.check_func(product_name, name, phone):
-            return 0
+            return 1
         self.update_client(name, phone)
         prodc = sep_count(product_name)
         prodc = self.producer(prodc)
         prodstr = self.prod_str(prodc)
-        check_num = db.Checks.count({'year': date[:4]})+1
+        check_num = db.Checks.count_documents({'year': date[:4]})+1
         if not self.form_check(date, name, phone, receiver, stuff, guarantee, prodstr, check_num):
-            return 0
-        db.Checks.insert_one({'Изделия': prodstr[1:], 'Гарантийность': guarantee, 'Принято от': name, 'Контакт': phone, 'Примечания': stuff, 'Принял': receiver, 'Дата': date, 'Статус': 'active', 'Num': check_num, 'year': date[:4]})
+            return 1
+        db.Checks.insert_one({'Изделия': prodstr[1:], 'Гарантийность': guarantee, 'Принято от': name, 
+            'Контакт': phone, 'Примечания': stuff, 'Принял': receiver, 'Дата': date, 'Статус': 'active', 
+            'Num': check_num, 'year': date[:4]})
         self.reset_completers()
         gotlist = []
         for i in prodc:
@@ -575,11 +601,27 @@ class MyWin(QtWidgets.QMainWindow):
             prod_str += '\n - {} {}шт. Производитель: {}'.format(i, prod_count[i][0], prod_count[i][1])
         return prod_str
 
-    def form_check(self, date, name, phone, receiver, stuff, guarantee, prod_str, check_num):
-        msg = 'Акт приёма №{} от {}\n\nИзделия:{}\nГарантийность: {}\nПринято от: {}\nКонтакт: {}\nПримечания: {}\nПринял: {}\nДата: {}'.format(check_num, str_date(date), prod_str, guarantee, name, phone, stuff, receiver, date)
-        reply = QtWidgets.QMessageBox.question(self, 'Сформировать акт приёма?', msg,QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+    def form_check(self, date, name, phone, receiver, stuff, guarantee, prod_str, check_num):     
+        msg = texts_conf["receive_act"]["text"].format(check_num, str_date(date), prod_str, guarantee, 
+            name, phone, stuff, receiver, date)
+        reply = QtWidgets.QMessageBox.question(self, texts_conf["receive_act"]["title"], msg,
+            QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        try:
+            cost = db.Jobs.find_one({'Наименование': 'Хранение'}, {'Стоимость': 1})['Стоимость']
+        except:
+            cost = '50'
         if reply == QtWidgets.QMessageBox.Yes:
-            create_doc('Акт приема в ремонт №{}\n от {}'.format(check_num, str_date(date)), [{'content':['Изделия', prod_str[1:]], 'type': 'field'},{'content':['Гарантийность', guarantee], 'type': 'field'},{'content':['Принято от',name], 'type':'field'},{'content':['Контакт', phone], 'type':'field'},{'content':['Примечания', stuff], 'type':'field'},{'content':['Принял',receiver], 'type':'field'},{'content':['Дата', str_date(date)], 'type':'field'},{'content': ['Дополнительное соглашение', 'Я {} , обязуюсь забрать и полностью оплатить согласованный проведенный ремонт изделий, указанных в акте приёма в ремонт.\n Если изделие не подлежит ремонту, его необходимо забрать, либо подписать соглашение на утилизацию, в противном случае срок хранения такого изделия составляет шесть месяцев.\n Я согласен(а), что срок бесплатного хранения по окончании ремонта у ИП Дик А.И. составляет 2 месяца. Начиная с первого дня третьего месяца оплата за хранение составит {} рублей в день за каждое изделие'.format(name, db.Jobs.find_one({'Наименование': 'Хранение'}, {'Стоимость':1})['Стоимость'])], 'type':'field'}], '/{}/Акты приёма'.format(date))
+            self.create_doc( texts_conf["docstr"]["receive_act"]["title"] .format(check_num, str_date(date)) , 
+                [{'content': ['Изделия', prod_str[1:]], 'type': 'field'},
+                {'content': ['Гарантийность', guarantee], 'type': 'field'},
+                {'content': ['Принято от',name], 'type': 'field'},
+                {'content': ['Контакт', phone], 'type': 'field'},
+                {'content': ['Примечания', stuff], 'type': 'field'},
+                {'content': ['Принял',receiver], 'type': 'field'},
+                {'content': ['Дата', str_date(date)], 'type': 'field'},
+                {'content': [texts_conf["docstr"]["receive_act"]["text"]["agreement_head"], 
+                texts_conf["docstr"]["receive_act"]["text"]["agreement_text"].format(name, cost) ], 'type': 'field'}], 
+                texts_conf["docstr"]["receive_act"]["text"]["save_path"].format(date))
             return True
         elif reply == QtWidgets.QMessageBox.No:
             return None
@@ -587,16 +629,18 @@ class MyWin(QtWidgets.QMainWindow):
     def check_func(self, product_name, name, phone):
         pattern_phone = r'[0-9]+'
         if product_name == '':
-            QtWidgets.QMessageBox.warning(self, 'Ошибка', 'Не введено название изделия')
+            QtWidgets.QMessageBox.warning(self, texts_conf["error"]["title"] , 
+                texts_conf["error"]["text"]["ni_prod_name"])
             return None
         elif name == '':
-            QtWidgets.QMessageBox.warning(self, 'Ошибка', 'Не введено ФИО')
+            QtWidgets.QMessageBox.warning(self, texts_conf["error"]["title"], 
+                texts_conf["error"]["text"]["ni_name"])
             return None
         elif phone == '':
             return None
         return True
 
-    def search_func(self):                                                          #переход к окну отображения базы
+    def search_func(self):                         #переход к окну отображения базы
         globals()['myapp'].hide()
         globals()['sew'].show()
 
@@ -625,7 +669,7 @@ class SearchWin(MyWin):
         self.create_default_table()
 
     def deletion(self):
-        self.are_you_sure(self.deactivate, 'Вы точно хотите удалить \nэту запись?')
+        self.are_you_sure(self.deactivate, texts_conf["warning"]["text"]["delete"])
 
     def scaler(self):
         if self.where == self.ui.comboBox_search_where.currentText():
@@ -676,7 +720,8 @@ class SearchWin(MyWin):
             return (parent.addAction(self.tr(string)), func)
 
         actionMenu = QtWidgets.QMenu(self.tr("&Actions"), self)
-        (del_action, data_opt[del_action]) = assign_act(actionMenu, 'Удалить', lambda : self.are_you_sure(self.delete_item, 'Вы точно хотите удалить \nэту запись?'))
+        (del_action, data_opt[del_action]) = assign_act(actionMenu, 
+            'Удалить', lambda : self.are_you_sure(self.delete_item, texts_conf["warning"]["text"]["delete"]))
 
         sorting_criteria = QtWidgets.QMenu(self.tr("&Сортировать по"), self)
         sorting_order = QtWidgets.QMenu(self.tr("&Порядок"), self)
@@ -687,29 +732,39 @@ class SearchWin(MyWin):
         actionMenu.addMenu(sorting_order)
 
         if self.where in ['Принято', 'В работе', 'Завершено']:
-            (set_status, data_opt[set_status]) = assign_act(actionMenu, "Сменить статус", lambda: self.are_you_sure(self.move_to_next_status, 'Вы точно хотите сменить \nстатус этой записи?'))
+            (set_status, data_opt[set_status]) = assign_act(actionMenu, 
+                "Сменить статус", lambda: self.are_you_sure(self.move_to_next_status, 
+                    'Вы точно хотите сменить \nстатус этой записи?'))
 
         if self.where in ['Принято', 'В работе', 'Завершено', 'Архив']:
             (show_all, data_opt[show_all]) = assign_act( actionMenu, 'Показать все сведения', self.show_all)
 
             point_status = QtWidgets.QMenu(self.tr("&Назначить статус"), self)
 
-            (point_got, data_opt[point_got]) = assign_act(point_status,'Принято', lambda: self.set_status('Принято'))
-            (point_in_work, data_opt[point_in_work]) = assign_act(point_status,'В работе', lambda: self.set_status('В работе'))
-            (point_finished, data_opt[point_finished]) = assign_act(point_status,'Завершено', lambda: self.set_status('Завершено'))
-            (point_archive, data_opt[point_archive]) = assign_act(point_status,'Архив', lambda: self.set_status('Архив'))
+            (point_got, data_opt[point_got]) = assign_act(point_status,
+                'Принято', lambda: self.set_status('Принято'))
+            (point_in_work, data_opt[point_in_work]) = assign_act(point_status,
+                'В работе', lambda: self.set_status('В работе'))
+            (point_finished, data_opt[point_finished]) = assign_act(point_status,
+                'Завершено', lambda: self.set_status('Завершено'))
+            (point_archive, data_opt[point_archive]) = assign_act(point_status,
+                'Архив', lambda: self.set_status('Архив'))
 
             date_search = QtWidgets.QMenu(self.tr("&Поиск по периоду"), self)
 
-            (date_search_got, data_opt[date_search_got]) = assign_act(date_search,'Получено', lambda: self.date_search('Дата'))
-            (date_search_done, data_opt[date_search_done]) = assign_act(date_search,'Завершено', lambda: self.date_search('Дата завершения'))
-            (date_search_sent, data_opt[date_search_sent]) = assign_act(date_search,'Отправлено', lambda: self.date_search('Дата отгрузки'))
+            (date_search_got, data_opt[date_search_got]) = assign_act(date_search,
+                'Получено', lambda: self.date_search('Дата'))
+            (date_search_done, data_opt[date_search_done]) = assign_act(date_search,
+                'Завершено', lambda: self.date_search('Дата завершения'))
+            (date_search_sent, data_opt[date_search_sent]) = assign_act(date_search,
+                'Отправлено', lambda: self.date_search('Дата отгрузки'))
 
             actionMenu.addMenu(point_status)
             actionMenu.addMenu(date_search)
 
         if self.where in ['Завершено', 'Архив']:
-            (final_docs, data_opt[final_docs]) = assign_act(actionMenu, 'Сформировать счёт и акт', self.final_docs)
+            (final_docs, data_opt[final_docs]) = assign_act(actionMenu, 
+                'Сформировать счёт и акт', self.final_docs)
 
         if self.where in 'Акты приёма в ремонт':
             (date_search_got, data_opt[date_search_got]) = assign_act(actionMenu, 'Поиск по дате', )
@@ -728,13 +783,17 @@ class SearchWin(MyWin):
     def form_act(self):
         def get_and_form(id_):
             x= db.Checks.find_one({'_id': id_})
-            a =[ x[i] for i in ['Дата', 'Принято от', 'Контакт', 'Принял', 'Примечания', 'Гарантийность', 'Изделия', 'Num']]
+            a =[ x[i] for i in ['Дата', 'Принято от', 'Контакт', 'Принял', 
+            'Примечания', 'Гарантийность', 'Изделия', 'Num']]
             self.form_check(*a)
         self.single_selection(get_and_form)
 
     def show_all(self):
         def show_all(id_):
-            alist = ['ФИО','Телефон','Принял','Изделие','Примечания','Дата','Производитель','Акт приёма','Гарантийность','Статус','Место','Передал в ремонт','Передано работнику','Перечень работ','Дата завершения','Цена','Дата отгрузки','Зарплата','Расчёт','Получатель', '_id']
+            alist = ['ФИО','Телефон','Принял','Изделие','Примечания','Дата',
+            'Производитель','Акт приёма','Гарантийность','Статус','Место',
+            'Передал в ремонт','Передано работнику','Перечень работ','Дата завершения',
+            'Цена','Дата отгрузки','Зарплата','Расчёт','Получатель', '_id']
             x = db.Applications.find_one({'_id': id_})
             strr = ''
             for i in alist:
@@ -753,19 +812,21 @@ class SearchWin(MyWin):
 
         name = self.single_selection(get_name)
 
-        def check_ns(id_):
+        def check_names(id_):
             x = config[self.where]['db'].find_one({'_id': id_})
             if name != x['ФИО']:
-                QtWidgets.QMessageBox.warning(sew, 'Ошибка', 'Нельзя составлять счёт на нескольких клиентов одновременно')
+                QtWidgets.QMessageBox.warning(sew, texts_conf["error"]["title"], 
+                    texts_conf["error"]["text"]["fin_doc_names"])
                 return None
             else:
                 return True
 
-        for i in self.multiple_selection(check_ns):
+        for i in self.multiple_selection(check_names):
             if i != True:
                 return None
 
-        content_list_pays = [{'type':'field', 'content': ['Поставщик:', 'ИП Дик А.И.']}, {'type':'field', 'content': ['Покупатель:', name]}]
+        content_list_pays = [{'type':'field', 'content': ['Поставщик:', 'ИП Дик']}, {'type':'field',
+            'content': ['Покупатель:', name]}]
         content_list_works = []
         l = []
 
@@ -775,9 +836,12 @@ class SearchWin(MyWin):
             l = []
             wks = sep_count(x['Перечень работ'])
             clw.append({'type': 'field', 'content': ['Список работ по изделию "{}"'.format(x['Изделие']), '']})
-            clw.append({'type': 'table', 'content': [['№', 'Наименование', 'Стоимость, руб.', 'Количество', 'Сумма, руб.'],[[str(q[0]+1), str(q[1]), db.Jobs.find_one({'Наименование': q[1]})['Стоимость'], str(wks[q[1]][0]), str(int(wks[q[1]][0]) * int(db.Jobs.find_one({'Наименование': q[1]})['Стоимость']))]for q in enumerate(wks)]]})
+            clw.append({'type': 'table', 'content': [['№', 'Наименование', 'Стоимость, руб.', 'Количество', 'Сумма, руб.'],
+                [[str(q[0]+1), str(q[1]), db.Jobs.find_one({'Наименование': q[1]})['Стоимость'], str(wks[q[1]][0]), 
+                str(int(wks[q[1]][0]) * int(db.Jobs.find_one({'Наименование': q[1]})['Стоимость']))]for q in enumerate(wks)]]})
 
-            clw.append({'type': 'field','content': ['Итого:', str(sum([int(wks[w][0])*int(db.Jobs.find_one({'Наименование': w})['Стоимость']) for w in wks]))+' руб.']})
+            clw.append({'type': 'field','content': ['Итого:', 
+                str(sum([int(wks[w][0])*int(db.Jobs.find_one({'Наименование': w})['Стоимость']) for w in wks]))+' руб.']})
             l.append('Ремонт изделия "{}"'.format(x['Изделие']))
             l.append(sum([int(wks[w][0])*int(db.Jobs.find_one({'Наименование': w})['Стоимость']) for w in wks]))
             return (x['Изделие'], l, clw, id_)
@@ -787,28 +851,32 @@ class SearchWin(MyWin):
         for i in self.multiple_selection(receipt_data):
             ths.append(i[0])
             l.append(i[1])
-            ids.append(i[3])
+            ids.append(str(i[3]))
             for x in i[2]:
                 content_list_works.append(x)
         str_ths = ', '.join(ths)
         str_ids = ','.join(ids)
         for i in enumerate(l):
             i[1].insert(0, i[0]+1)
-        insa = [{'type': 'table', 'content': [['№', 'Товары/работы/услуги', 'Цена, руб.'], l]},{'type':'field', 'content':['Итого:', str(sum([ i[2] for i in l]))+' руб.']},{'type':'field', 'content': '\n\n\n\n\n\n'}, {'type': 'field', 'content': ['ИП Дик А.И.', '_____________________________________{}'.format(str_date(date))]}]
+        insa = [{'type': 'table', 'content': [['№', 'Товары/работы/услуги', 'Цена, руб.'], l]},{'type':'field', 'content':['Итого:', 
+            str(sum([ i[2] for i in l]))+' руб.']},{'type':'field', 'content': '\n\n\n\n\n\n'}, {'type': 'field', 
+            'content': ['ИП Дик', '_____________________________________{}'.format(str_date(date))]}]
         for i in insa:
             content_list_pays.append(i)
 
-        cn = db.FinDocs.count({'date': date[:4]})+1
+        cn = db.FinDocs.count_documents({'date': date[:4]})+1
 
         f = open('template.docx', 'rb')
-        tmplt = Document(f)
+        template = Document(f)
         f.close()
 
-        pay = create_doc('Счёт на оплату № A-{} от {}'.format(cn, str_date(date)), content_list_pays, '/{}/Счета'.format(date), tmplt)
-        work = create_doc('Акт выполненных работ к счёту №{} от {}'.format(str(cn), str_date(date)), content_list_works,'/{}/Акты выполненных работ'.format(date))
+        pay = self.create_doc(texts_conf["docstr"]["bill"]["title"].format(cn, str_date(date)), content_list_pays, 
+            texts_conf["docstr"]["bill"]["text"]["save_path"].format(date), template)
+        work = self.create_doc(texts_conf["docstr"]["jobs_done"]["title"].format(str(cn), str_date(date)), 
+            content_list_works,texts_conf["docstr"]["jobs_done"]["text"]["save_path"].format(date))
 
-        db.FinDocs.insert({'date': date,'year':date[:4], 'Клиент': name, 'Изделия': str_ths, 'ids':str_ids})
-        QtWidgets.QMessageBox.information(self, 'Сообщение', 'Документы сформированы')
+        db.FinDocs.insert_one({'date': date,'year':date[:4], 'Клиент': name, 'Изделия': str_ths, 'ids':str_ids})
+        QtWidgets.QMessageBox.information(self, texts_conf["message"]["title"], texts_conf["message"]["text"]["final_docs"])
 
 
     def move_to_next_status(self):
@@ -865,7 +933,8 @@ class SearchWin(MyWin):
             self.enterform = EnterForm()
             self.enterform.show()
         else:
-            QtWidgets.QMessageBox.information(self, 'Ошибка', 'База не имеет формы ввода')
+            QtWidgets.QMessageBox.information(self, texts_conf["error"]["title"], 
+                texts_conf["error"]["text"]["db_enterform"])
             return None
 
     def date_search(self, field):
@@ -938,20 +1007,22 @@ class SearchWin(MyWin):
 
     def multiple_selection(self, function):
         id_f = config[self.where]['id_f']
-        ids = sorted(set(ObjectId(index.sibling(index.row(), id_f).data()) for index in self.ui.tableView_applications.selectedIndexes()))
+        ids = sorted(set(ObjectId(index.sibling(index.row(), 
+            id_f).data()) for index in self.ui.tableView_applications.selectedIndexes()))
         for anid in ids:
             r = function(anid)
             yield r
 
     def check_if_selected(self, ids):
         if ids:
-            QtWidgets.QMessageBox.warning(self, 'Ошибка', 'Ничего не выбрано')
+            QtWidgets.QMessageBox.warning(self, texts_conf["error"]["title"], 
+                texts_conf["error"]["text"]["selection_chk"])
 
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_Return:
             self.scaler()
         elif e.key() == QtCore.Qt.Key_Delete:
-            self.are_you_sure(self.deactivate, 'Вы точно хотите удалить \nэту запись?')
+            self.are_you_sure(self.deactivate, texts_conf["warning"]["text"]["delete"])
 
 
 class ApplicationsTableModel(QtCore.QAbstractTableModel):
@@ -1024,7 +1095,8 @@ class Delegate(QtWidgets.QStyledItemDelegate):
         ident = model.index(index.row(),config[self.table]['id_f']).data()
         if 'cu_income' in cur_field:
             new_data = cu_conf[cur_field['cu_income']](new_data, ident)
-        config[self.table]['db'].find_one_and_update({'_id': ObjectId(ident)},{ '$set': {cur_field['field']: new_data}})
+        config[self.table]['db'].find_one_and_update({'_id': ObjectId(ident)},
+            { '$set': {cur_field['field']: new_data}})
         sew.from_last()
 
 
@@ -1127,20 +1199,14 @@ def sep_count(string):
     # adic = {re.split(pattern, i)[0].strip(): re.split(pattern, i)[1].strip('()') for i in b}
     return adic
 
-def main_cycle():
-    if __name__ == "__main__":
-        app = QtWidgets.QApplication(sys.argv)
-        globals()['myapp'] = MyWin()
-        globals()['sew'] = SearchWin()
-        globals()['myapp'].show()
-        sys.exit(app.exec_())
 
-
-thread_server = threading.Thread(target=server, name='server')
-thread_main = threading.Thread(target=main_cycle, name='main cycle')
-
-thread_server.start()
-thread_main.start()
-
-thread_server.join()
-thread_main.join()
+if __name__ == "__main__":
+    client()
+    bdir = os.getcwd()
+    with open(os.path.join(bdir, 'texts_and_fields.json')) as texts_and_fields:
+        texts_conf = json.load(texts_and_fields)
+    app = QtWidgets.QApplication(sys.argv)
+    myapp = MyWin()
+    sew = SearchWin()
+    myapp.show()
+    sys.exit(app.exec_())
